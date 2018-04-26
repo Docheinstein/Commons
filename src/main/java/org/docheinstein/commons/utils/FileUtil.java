@@ -1,14 +1,15 @@
 package org.docheinstein.commons.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.Scanner;
 
 /**
  * Provides utilities for files.
  */
 public class FileUtil {
+
+    private static final String ENDL = System.getProperty("line.separator");
+
     /**
      * Copies a file from a resource to a target output stream.
      * @param source the resource to copy
@@ -139,5 +140,111 @@ public class FileUtil {
             }
         }
         return deleteOk && path.delete();
+    }
+
+    /**
+     * Writes the given content to a file.
+     * @param path the path of the file
+     * @param content the content to write
+     * @return true if the file has been written successfully
+     */
+    public static boolean write(String path, String content) {
+        try {
+            PrintWriter w = new PrintWriter(path, "UTF-8");
+            w.print(content);
+            w.close();
+            return true;
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            return false;
+        }
+    }
+
+
+    /**
+     * Reads the resource at the given path.
+     * @param path the resource path of the resource
+     * @param clazz the class from where the resource is loaded
+     * @return the read resource as a string
+     */
+    public static String readResource(String path, Class clazz) {
+        return readResource(clazz.getResourceAsStream(path));
+    }
+
+    /**
+     * Reads the given resource.
+     * @param res the input stream of the resource to read
+     * @return the read resource as a string
+     */
+    public static String readResource(InputStream res) {
+        // https://stackoverflow.com/questions/309424/read-convert-an-inputstream-to-a-string
+        Scanner s = new Scanner(res).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    /**
+     * Reads the content of a file at the given path.
+     * @param path the path of the file to read
+     * @return the content to the file
+     */
+    public static String readFile(String path) {
+        return readFile(path, ENDL);
+    }
+
+    /**
+     * Reads the content of a file at the given path using the
+     * given line separator.
+     * @param path the path of the file to read
+     * @param lineSeparator the line separator to use
+     * @return the content to the file
+     */
+    public static String readFile(String path, String lineSeparator) {
+        return readFile(new File(path), lineSeparator);
+    }
+
+    /**
+     * Reads the content of a file using the given line separator.
+     * @param file the file to read
+     * @param lineSeparator the line separator to use
+     * @return the content to the file
+     */
+    public static String readFile(File file, String lineSeparator) {
+        if (!file.exists())
+            return null;
+
+        FileReader reader = null;
+        BufferedReader bufferedReader = null;
+
+        try {
+            reader = new FileReader(file);
+            bufferedReader = new BufferedReader(reader);
+
+            String line;
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            // Read the first line outside the cycle in order not to add ENDL at the EOF
+            line = bufferedReader.readLine();
+            stringBuilder.append(line);
+
+            while ( (line = bufferedReader.readLine()) != null) {
+                // L.debug(LOGGER_TAG, "Reading line:" + line);
+                stringBuilder.append(lineSeparator);
+                stringBuilder.append(line);
+
+            }
+            return stringBuilder.toString();
+        } catch (IOException e) {
+            return null;
+        } finally {
+            try {
+                if (bufferedReader != null)
+                    bufferedReader.close();
+                if (reader != null)
+                    reader.close();
+            }
+            catch (IOException e) {
+                return null;
+            }
+        }
     }
 }
