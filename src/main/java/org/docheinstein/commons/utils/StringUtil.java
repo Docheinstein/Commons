@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Provides utilities for Strings.
+ * Provides utilities for strings.
  */
 public class StringUtil {
     /**
