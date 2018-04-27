@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class Logger {
     private static final Set<LoggerListener> sListeners = new CopyOnWriteArraySet<>();
-    private static boolean ENABLED = false;
+    private static boolean sEnabled = false;
 
     public interface LoggerListener {
         void onLoggerMessage(String message);
@@ -25,11 +25,11 @@ public class Logger {
     }
 
     public static void enable(boolean enabled) {
-        ENABLED = enabled;
+        sEnabled = enabled;
     }
 
     public static boolean isEnabled() {
-        return ENABLED;
+        return sEnabled;
     }
 
     private String mTag;
@@ -43,7 +43,7 @@ public class Logger {
     }
 
     void out(String message) {
-
-        sListeners.forEach(ll -> ll.onLoggerMessage(mTag + " " + message));
+        if (sEnabled)
+            sListeners.forEach(ll -> ll.onLoggerMessage(mTag + " " + message));
     }
 }
