@@ -1,4 +1,4 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.types;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

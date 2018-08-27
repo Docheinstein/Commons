@@ -1,14 +1,15 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.internal;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Internal logger used for debug the commons stuff.
+ * Internal logger used for debug.
  */
-public class Logger {
+public class DocheinsteinCommonsLogger {
     private static final Set<LoggerListener> sListeners = new CopyOnWriteArraySet<>();
     private static boolean sEnabled = false;
+    private String mTag;
 
     public interface LoggerListener {
         void onLoggerMessage(String message);
@@ -32,17 +33,15 @@ public class Logger {
         return sEnabled;
     }
 
-    private String mTag;
-
-    static Logger createForTag(String tag) {
-        return new Logger(tag);
+    public static DocheinsteinCommonsLogger createForTag(String tag) {
+        return new DocheinsteinCommonsLogger(tag);
     }
 
-    private Logger(String tag) {
+    private DocheinsteinCommonsLogger(String tag) {
         mTag = tag;
     }
 
-    void out(String message) {
+    public void out(String message) {
         if (sEnabled)
             sListeners.forEach(ll -> ll.onLoggerMessage(mTag + " " + message));
     }

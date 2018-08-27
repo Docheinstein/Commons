@@ -1,4 +1,6 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.crypto;
+
+import org.docheinstein.commons.utils.types.StringUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

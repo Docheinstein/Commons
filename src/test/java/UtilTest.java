@@ -1,4 +1,4 @@
-import org.docheinstein.commons.utils.FileUtil;
+import org.docheinstein.commons.utils.file.FileUtil;
 
 public class UtilTest {
     public static void main(String args[])  {

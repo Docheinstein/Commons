@@ -1,4 +1,4 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.types;
 
 /**
  * Provides utilities for booleans.

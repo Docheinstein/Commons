@@ -1,4 +1,4 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.file;
 
 import java.io.*;
 import java.util.Scanner;

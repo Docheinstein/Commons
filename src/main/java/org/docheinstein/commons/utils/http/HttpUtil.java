@@ -1,4 +1,4 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.http;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

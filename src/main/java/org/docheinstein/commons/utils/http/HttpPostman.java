@@ -1,5 +1,9 @@
-package org.docheinstein.commons.utils;
+package org.docheinstein.commons.utils.http;
 
+
+import org.docheinstein.commons.internal.DocheinsteinCommonsLogger;
+import org.docheinstein.commons.utils.crypto.CryptoUtil;
+import org.docheinstein.commons.utils.types.StringUtil;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -10,7 +14,7 @@ import java.net.URL;
 
 public class HttpPostman {
 
-    private static final Logger L = Logger.createForTag("{HTTP_POSTMAN}");
+    private static final DocheinsteinCommonsLogger L = DocheinsteinCommonsLogger.createForTag("{HTTP_POSTMAN}");
 
     /**
      * The response obtained from a postman request.
