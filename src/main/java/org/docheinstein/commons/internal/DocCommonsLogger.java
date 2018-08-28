@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * Internal logger used for debug.
  */
-public class DocheinsteinCommonsLogger {
+public class DocCommonsLogger {
     private static final Set<LoggerListener> sListeners = new CopyOnWriteArraySet<>();
     private static boolean sEnabled = false;
     private String mTag;
@@ -33,11 +33,11 @@ public class DocheinsteinCommonsLogger {
         return sEnabled;
     }
 
-    public static DocheinsteinCommonsLogger createForTag(String tag) {
-        return new DocheinsteinCommonsLogger(tag);
+    public static DocCommonsLogger createForTag(String tag) {
+        return new DocCommonsLogger(tag);
     }
 
-    private DocheinsteinCommonsLogger(String tag) {
+    private DocCommonsLogger(String tag) {
         mTag = tag;
     }
 

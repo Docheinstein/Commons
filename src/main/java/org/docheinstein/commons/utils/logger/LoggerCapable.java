@@ -1,4 +1,4 @@
-package org.docheinstein.commons.shared;
+package org.docheinstein.commons.utils.logger;
 
 
 /**

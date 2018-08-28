@@ -1,7 +1,7 @@
 package org.docheinstein.commons.utils.zip;
 
 import org.docheinstein.commons.utils.file.FileUtil;
-import org.docheinstein.commons.internal.DocheinsteinCommonsLogger;
+import org.docheinstein.commons.internal.DocCommonsLogger;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
@@ -12,7 +12,7 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipUtil {
 
-    private static final DocheinsteinCommonsLogger L = DocheinsteinCommonsLogger.createForTag("{ZIP_UTIL}");
+    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{ZIP_UTIL}");
 
     /**
      * Unzip a resource to a target directory.

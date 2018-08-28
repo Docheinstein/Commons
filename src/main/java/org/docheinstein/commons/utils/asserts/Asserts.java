@@ -1,7 +1,7 @@
 package org.docheinstein.commons.utils.asserts;
 
 
-import org.docheinstein.commons.shared.LoggerCapable;
+import org.docheinstein.commons.utils.logger.LoggerCapable;
 
 /**
  * Contains typically usually used asserts.
