@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Entity able to perform HTTP request using different {@link RequestMethod}
@@ -26,7 +28,7 @@ public class HttpRequester {
         private Integer mResponseCode;
         private String mResponseBody;
         private long mContentLength;
-        private HttpURLConnection mConnection;
+        private Map<String, List<String>> mHeaderFields;
 
         /**
          * Returns whether the requests has been performed successfully.
@@ -60,12 +62,8 @@ public class HttpRequester {
             return mContentLength;
         }
 
-        /**
-         * Returns the underlying connection.
-         * @return the underlying connection.
-         */
-        public HttpURLConnection getUnderlyingConnection() {
-            return mConnection;
+        public Map<String, List<String>> getHeaderFields() {
+            return mHeaderFields;
         }
     }
 
@@ -100,14 +98,19 @@ public class HttpRequester {
         }
     }
 
+    private HttpURLConnection mConnection;
+
     // Defaults
     private RequestMethod mMethod = RequestMethod.GET;
     private ContentType mContentType = null;
     private boolean mRedirect = true;
 
-    private String mURI;
-    private String mOutData;
-    private String mEncodedUserPass;
+    private String mURI = null;
+    private String mOutData = null;
+    private String mEncodedUserPass = null;
+
+    private String mUserAgent = null;
+    private String mAccept = null;
 
 
 
@@ -289,53 +292,114 @@ public class HttpRequester {
     }
 
     /**
+     * Sets the 'User-Agent' header.
+     * @param userAgent the user agent string
+     * @return the requester
+     */
+    public HttpRequester userAgent(String userAgent) {
+        mUserAgent = userAgent;
+        return this;
+    }
+
+    /**
+     * Sets the 'Accept' header.
+     * @param accept the accept string
+     * @return the requester
+     */
+    public HttpRequester accept(String accept) {
+        mAccept = accept;
+        return this;
+    }
+
+    /**
+     * Returns the underlying connection.
+     * @return the underlying connection.
+     */
+    public HttpURLConnection getUnderlyingConnection() {
+        return mConnection;
+    }
+
+    /**
+     * Actually create the underlying {@link HttpURLConnection} that can be
+     * retrieved via {@link #getUnderlyingConnection()}
+     * @return
+     */
+    public HttpRequester initialized() {
+        if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null)
+            L.out("Can't send request, please build HttpRequester with every mandatory field");
+
+        L.out("Initializing with URI: " + mURI);
+
+        URL url = null;
+        try {
+            url = new URL(mURI);
+            mConnection = (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+    }
+
+    /**
      * Sends a request for the built requester and returns a response object.
      * @return the response of this request
      */
     public Response send() {
+        if (mConnection == null)
+            initialized();
+
         Response resp = new Response();
 
         try {
-            if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null)
-                L.out("Can't send request, please build HttpRequester with every mandatory field");
-
-            L.out("Will send request to: " + mURI);
-
-            URL url = new URL(mURI);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            // Cache
+            mConnection.setUseCaches(false);
 
             // Method
-            conn.setRequestMethod(mMethod.name);
+            mConnection.setRequestMethod(mMethod.name);
 
             // Headers
+
+            // Content-Type
             if (mContentType != null)
-                conn.setRequestProperty("Content-Type", mContentType.name);
+                mConnection.setRequestProperty("Content-Type", mContentType.name);
+
+
+            // User-Agent
+            if (StringUtil.isValid(mUserAgent))
+                mConnection.setRequestProperty("User-Agent", mUserAgent);
+
+            // Accept
+            if (StringUtil.isValid(mAccept))
+                mConnection.setRequestProperty("Accept", mAccept);
 
             // Redirect
-            conn.setInstanceFollowRedirects(mRedirect);
+            mConnection.setInstanceFollowRedirects(mRedirect);
 
             if (StringUtil.isValid(mEncodedUserPass)) {
-                conn.setRequestProperty("Authorization", "Basic " + mEncodedUserPass);
+                mConnection.setRequestProperty("Authorization", "Basic " + mEncodedUserPass);
             }
 
             // Content
             if (StringUtil.isValid(mOutData)) {
-                conn.setDoOutput(true);
-                DataOutputStream dataOut = new DataOutputStream(conn.getOutputStream());
+                mConnection.setDoOutput(true);
+                DataOutputStream dataOut = new DataOutputStream(mConnection.getOutputStream());
                 dataOut.writeBytes(mOutData);
                 dataOut.close();
             }
 
-            resp.mResponseCode = conn.getResponseCode();
-            resp.mContentLength = conn.getContentLengthLong();
-            resp.mConnection = conn;
+            mConnection.connect();
+
+            resp.mResponseCode = mConnection.getResponseCode();
+            resp.mContentLength = mConnection.getContentLengthLong();
+            resp.mHeaderFields = mConnection.getHeaderFields();
 
             InputStream is;
 
             if (resp.mResponseCode >= 200 && resp.mResponseCode < 400)
-                is = conn.getInputStream();
+                is = mConnection.getInputStream();
             else
-                is = conn.getErrorStream();
+                is = mConnection.getErrorStream();
 
             String line;
             StringBuilder sb;
@@ -344,7 +408,8 @@ public class HttpRequester {
             if (is != null) {
                 // Read standard in
                 sb = new StringBuilder();
-                br = new BufferedReader(new InputStreamReader(is));
+                InputStreamReader isr = new InputStreamReader(is);
+                br = new BufferedReader(isr);
 
                 if ((line = br.readLine()) != null)
                     sb.append(line); // Avoid the last \n by handling the first
@@ -357,8 +422,11 @@ public class HttpRequester {
 
                 resp.mResponseBody = sb.toString();
                 br.close();
+                isr.close();
                 is.close();
             }
+
+            mConnection.disconnect();
 
             return resp;
         } catch (ProtocolException e) {
