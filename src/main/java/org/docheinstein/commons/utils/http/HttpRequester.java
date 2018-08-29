@@ -1,6 +1,5 @@
 package org.docheinstein.commons.utils.http;
 
-
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.crypto.CryptoUtil;
 import org.docheinstein.commons.utils.types.StringUtil;
@@ -12,17 +11,22 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
-public class HttpPostman {
+/**
+ * Entity able to perform HTTP request using different {@link RequestMethod}
+ * and eventually basic authentication.
+ */
+public class HttpRequester {
 
-    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{HTTP_POSTMAN}");
+    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{HTTP_REQUESTER}");
 
     /**
-     * The response obtained from a postman request.
+     * The response obtained from a requester request.
      */
     public static class Response {
         private Integer mResponseCode;
         private String mResponseBody;
-        private int mContentLength;
+        private long mContentLength;
+        private HttpURLConnection mConnection;
 
         /**
          * Returns whether the requests has been performed successfully.
@@ -52,8 +56,16 @@ public class HttpPostman {
          * Returns the 'Content-Length' header of the response.
          * @return the 'Content-Length' header of the response
          */
-        public int getContentLength() {
+        public long getContentLength() {
             return mContentLength;
+        }
+
+        /**
+         * Returns the underlying connection.
+         * @return the underlying connection.
+         */
+        public HttpURLConnection getUnderlyingConnection() {
+            return mConnection;
         }
     }
 
@@ -97,118 +109,118 @@ public class HttpPostman {
     private String mEncodedUserPass;
 
     /**
-     * Creates an http postman.
-     * @return an http postman
+     * Creates an http requester.
+     * @return an http requester
      */
-    public static HttpPostman create() {
-        return new HttpPostman();
+    public static HttpRequester create() {
+        return new HttpRequester();
     }
 
     /**
-     * Creates an http postman for the given request method.
+     * Creates an http requester for the given request method.
      * @param method the request method
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman create(HttpPostman.RequestMethod method) {
+    public static HttpRequester create(HttpRequester.RequestMethod method) {
         return create().method(method);
     }
 
     /**
-     * Creates an http postman for the request method 'HEAD'.
-     * @return an http postman
+     * Creates an http requester for the request method 'HEAD'.
+     * @return an http requester
      */
-    public static HttpPostman head() {
-        return create(HttpPostman.RequestMethod.HEAD);
+    public static HttpRequester head() {
+        return create(HttpRequester.RequestMethod.HEAD);
     }
 
     /**
-     * Creates an http postman for the request method 'GET'.
-     * @return an http postman
+     * Creates an http requester for the request method 'GET'.
+     * @return an http requester
      */
-    public static HttpPostman get() {
-        return create(HttpPostman.RequestMethod.GET);
+    public static HttpRequester get() {
+        return create(HttpRequester.RequestMethod.GET);
     }
 
     /**
-     * Creates an http postman for the request method 'POST'.
-     * @return an http postman
+     * Creates an http requester for the request method 'POST'.
+     * @return an http requester
      */
-    public static HttpPostman post() {
-        return create(HttpPostman.RequestMethod.POST);
+    public static HttpRequester post() {
+        return create(HttpRequester.RequestMethod.POST);
     }
 
     /**
-     * Creates an http postman for the request method 'DELETE'.
-     * @return an http postman
+     * Creates an http requester for the request method 'DELETE'.
+     * @return an http requester
      */
-    public static HttpPostman delete() {
-        return create(HttpPostman.RequestMethod.DELETE);
+    public static HttpRequester delete() {
+        return create(HttpRequester.RequestMethod.DELETE);
     }
 
     /**
-     * Creates an http postman for the request method 'PUT'.
-     * @return an http postman
+     * Creates an http requester for the request method 'PUT'.
+     * @return an http requester
      */
-    public static HttpPostman put() {
-        return create(HttpPostman.RequestMethod.PUT);
+    public static HttpRequester put() {
+        return create(HttpRequester.RequestMethod.PUT);
     }
 
     /**
-     * Creates an http postman for the request method 'HEAD' for the
+     * Creates an http requester for the request method 'HEAD' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman head(String uri) {
+    public static HttpRequester head(String uri) {
         return head().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'GET' for the
+     * Creates an http requester for the request method 'GET' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman get(String uri) {
+    public static HttpRequester get(String uri) {
         return get().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'POST' for the
+     * Creates an http requester for the request method 'POST' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman post(String uri) {
+    public static HttpRequester post(String uri) {
         return post().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'DELETE' for the
+     * Creates an http requester for the request method 'DELETE' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman delete(String uri) {
+    public static HttpRequester delete(String uri) {
         return delete().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'PUT' for the
+     * Creates an http requester for the request method 'PUT' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman put(String uri) {
+    public static HttpRequester put(String uri) {
         return put().uri(uri);
     }
 
     /**
      * Sets the given uri.
      * @param uri an uri
-     * @return the postman
+     * @return the requester
      */
-    public HttpPostman uri(String uri) {
+    public HttpRequester uri(String uri) {
         mURI = uri;
         return this;
     }
@@ -216,9 +228,9 @@ public class HttpPostman {
     /**
      * Sets the given method.
      * @param method an uri
-     * @return the postman
+     * @return the requester
      */
-    public HttpPostman method(RequestMethod method) {
+    public HttpRequester method(RequestMethod method) {
         mMethod = method;
         return this;
     }
@@ -228,11 +240,11 @@ public class HttpPostman {
      * plain user and password.
      * @param plainUser a plain username
      * @param plainPass a plain password
-     * @return the postman
+     * @return the requester
      *
      * @see #basicAuth(String)
      */
-    public HttpPostman basicAuth(String plainUser, String plainPass) {
+    public HttpRequester basicAuth(String plainUser, String plainPass) {
         basicAuth(CryptoUtil.Base64.encode(plainUser + ":" + plainPass));
         return this;
     }
@@ -241,11 +253,11 @@ public class HttpPostman {
      * Sets the 'Basic Authentication' header for the given
      * encoded user and password.
      * @param encodedUserPass an already encoded user:pass
-     * @return the postman
+     * @return the requester
      *
      * @see #basicAuth(String, String)
      */
-    public HttpPostman basicAuth(String encodedUserPass) {
+    public HttpRequester basicAuth(String encodedUserPass) {
         mEncodedUserPass = encodedUserPass;
         return this;
     }
@@ -254,16 +266,16 @@ public class HttpPostman {
      * Sets the body.
      * @param contentType the content type of the body
      * @param bodyData the body string
-     * @return the postman
+     * @return the requester
      */
-    public HttpPostman body(ContentType contentType, String bodyData) {
+    public HttpRequester body(ContentType contentType, String bodyData) {
         mContentType = contentType;
         mOutData = bodyData;
         return this;
     }
 
     /**
-     * Sends a request for the built postman and returns a response object.
+     * Sends a request for the built requester and returns a response object.
      * @return the response of this request
      */
     public Response send() {
@@ -271,7 +283,7 @@ public class HttpPostman {
 
         try {
             if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null)
-                L.out("Can't send request, please build HttpPostman with every mandatory field");
+                L.out("Can't send request, please build HttpRequester with every mandatory field");
 
             L.out("Will send request to: " + mURI);
 
@@ -298,7 +310,8 @@ public class HttpPostman {
 
 
             resp.mResponseCode = conn.getResponseCode();
-            resp.mContentLength = conn.getContentLength();
+            resp.mContentLength = conn.getContentLengthLong();
+            resp.mConnection = conn;
 
             InputStream is;
 
@@ -342,7 +355,7 @@ public class HttpPostman {
 
     /**
      * Trust all the certificates for every HTTP connection established
-     * (from this postman and from other classes too).
+     * (from this requester and from other classes too).
      */
     public static void enableTrustAllSocketFactory() {
         // Create a trust manager that does not validate certificate chains

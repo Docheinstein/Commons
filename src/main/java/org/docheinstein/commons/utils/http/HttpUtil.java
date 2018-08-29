@@ -16,8 +16,11 @@ public class HttpUtil {
      */
     public interface DownloadObserver {
         /**
-         * Called after a certain progress of the download.
-         * @param downloadedBytes the download byte count
+         * Called on download's progress.
+         * The byte delay between consecutive calls of this method is defined
+         * by the parameter passed to {@link #download(String, String, String,
+         * DownloadObserver, int)}
+         * @param downloadedBytes
          */
         void onProgress(long downloadedBytes);
     }
@@ -35,6 +38,7 @@ public class HttpUtil {
                                 String outputPath) throws IOException {
 
     }
+
     /**
      * Download a resource from an url.
      * @param urlString the url to download
@@ -131,109 +135,109 @@ public class HttpUtil {
     }
 
     /**
-     * Creates an http postman.
-     * @return an http postman
+     * Creates an http requester.
+     * @return an http requester
      */
-    public static HttpPostman create() {
-        return new HttpPostman();
+    public static HttpRequester create() {
+        return new HttpRequester();
     }
 
     /**
-     * Creates an http postman for the given request method.
+     * Creates an http requester for the given request method.
      * @param method the request method
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman create(HttpPostman.RequestMethod method) {
+    public static HttpRequester create(HttpRequester.RequestMethod method) {
         return create().method(method);
     }
 
     /**
-     * Creates an http postman for the request method 'HEAD'.
-     * @return an http postman
+     * Creates an http requester for the request method 'HEAD'.
+     * @return an http requester
      */
-    public static HttpPostman head() {
-        return create(HttpPostman.RequestMethod.HEAD);
+    public static HttpRequester head() {
+        return create(HttpRequester.RequestMethod.HEAD);
     }
 
     /**
-     * Creates an http postman for the request method 'GET'.
-     * @return an http postman
+     * Creates an http requester for the request method 'GET'.
+     * @return an http requester
      */
-    public static HttpPostman get() {
-        return create(HttpPostman.RequestMethod.GET);
+    public static HttpRequester get() {
+        return create(HttpRequester.RequestMethod.GET);
     }
 
     /**
-     * Creates an http postman for the request method 'POST'.
-     * @return an http postman
+     * Creates an http requester for the request method 'POST'.
+     * @return an http requester
      */
-    public static HttpPostman post() {
-        return create(HttpPostman.RequestMethod.POST);
+    public static HttpRequester post() {
+        return create(HttpRequester.RequestMethod.POST);
     }
 
     /**
-     * Creates an http postman for the request method 'DELETE'.
-     * @return an http postman
+     * Creates an http requester for the request method 'DELETE'.
+     * @return an http requester
      */
-    public static HttpPostman delete() {
-        return create(HttpPostman.RequestMethod.DELETE);
+    public static HttpRequester delete() {
+        return create(HttpRequester.RequestMethod.DELETE);
     }
 
     /**
-     * Creates an http postman for the request method 'PUT'.
-     * @return an http postman
+     * Creates an http requester for the request method 'PUT'.
+     * @return an http requester
      */
-    public static HttpPostman put() {
-        return create(HttpPostman.RequestMethod.PUT);
+    public static HttpRequester put() {
+        return create(HttpRequester.RequestMethod.PUT);
     }
 
     /**
-     * Creates an http postman for the request method 'HEAD' for the
+     * Creates an http requester for the request method 'HEAD' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman head(String uri) {
+    public static HttpRequester head(String uri) {
         return head().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'GET' for the
+     * Creates an http requester for the request method 'GET' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman get(String uri) {
+    public static HttpRequester get(String uri) {
         return get().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'POST' for the
+     * Creates an http requester for the request method 'POST' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman post(String uri) {
+    public static HttpRequester post(String uri) {
         return post().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'DELETE' for the
+     * Creates an http requester for the request method 'DELETE' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman delete(String uri) {
+    public static HttpRequester delete(String uri) {
         return delete().uri(uri);
     }
 
     /**
-     * Creates an http postman for the request method 'PUT' for the
+     * Creates an http requester for the request method 'PUT' for the
      * given uri.
      * @param uri an uri
-     * @return an http postman
+     * @return an http requester
      */
-    public static HttpPostman put(String uri) {
+    public static HttpRequester put(String uri) {
         return put().uri(uri);
     }
 }
