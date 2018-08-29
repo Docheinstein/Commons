@@ -102,7 +102,7 @@ public class HttpRequester {
 
     // Defaults
     private RequestMethod mMethod = RequestMethod.GET;
-    private ContentType mContentType = ContentType.PLAIN;
+    private ContentType mContentType = null;
     private boolean mRedirect = true;
 
     private String mURI;
@@ -308,7 +308,8 @@ public class HttpRequester {
             conn.setRequestMethod(mMethod.name);
 
             // Headers
-            conn.setRequestProperty("Content-Type", mContentType.name);
+            if (mContentType != null)
+                conn.setRequestProperty("Content-Type", mContentType.name);
 
             // Redirect
             conn.setInstanceFollowRedirects(mRedirect);
@@ -324,7 +325,6 @@ public class HttpRequester {
                 dataOut.writeBytes(mOutData);
                 dataOut.close();
             }
-
 
             resp.mResponseCode = conn.getResponseCode();
             resp.mContentLength = conn.getContentLengthLong();
@@ -357,6 +357,7 @@ public class HttpRequester {
 
                 resp.mResponseBody = sb.toString();
                 br.close();
+                is.close();
             }
 
             return resp;
