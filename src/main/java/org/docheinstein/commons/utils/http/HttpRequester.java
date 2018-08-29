@@ -103,10 +103,13 @@ public class HttpRequester {
     // Defaults
     private RequestMethod mMethod = RequestMethod.GET;
     private ContentType mContentType = ContentType.PLAIN;
+    private boolean mRedirect = true;
 
     private String mURI;
     private String mOutData;
     private String mEncodedUserPass;
+
+
 
     /**
      * Creates an http requester.
@@ -275,6 +278,17 @@ public class HttpRequester {
     }
 
     /**
+     * Whether the connection should automatically follow the 'location'
+     * header or not.
+     * @param redirect whether allow redirection
+     * @return
+     */
+    public HttpRequester allowRedirect(boolean redirect) {
+        mRedirect = redirect;
+        return this;
+    }
+
+    /**
      * Sends a request for the built requester and returns a response object.
      * @return the response of this request
      */
@@ -295,6 +309,9 @@ public class HttpRequester {
 
             // Headers
             conn.setRequestProperty("Content-Type", mContentType.name);
+
+            // Redirect
+            conn.setInstanceFollowRedirects(mRedirect);
 
             if (StringUtil.isValid(mEncodedUserPass)) {
                 conn.setRequestProperty("Authorization", "Basic " + mEncodedUserPass);
