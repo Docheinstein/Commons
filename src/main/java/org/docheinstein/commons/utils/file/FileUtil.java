@@ -2,6 +2,7 @@ package org.docheinstein.commons.utils.file;
 
 import java.io.*;
 import java.util.Scanner;
+import java.util.function.Function;
 
 /**
  * Provides utilities for files.
@@ -9,6 +10,44 @@ import java.util.Scanner;
 public class FileUtil {
 
     private static final String ENDL = System.getProperty("line.separator");
+
+    /**
+     * Checks whether the given folder exists, and if not tries to create the
+     * directory via {@link File#mkdirs()}
+     * @param folder the folder
+     * @return whether the folders have been created
+     */
+    private static boolean ensureFolderExistence(File folder) {
+        return exists(folder) || folder.mkdirs();
+    }
+
+    /**
+     * Checks whether the given file exists, and if not tries to create the
+     * directory via {@link File#createNewFile()} ()}
+     * @param file the file
+     * @return whether the file has been created
+     */
+    private static boolean ensureFileExistence(File file) {
+        return ensureFileExistence(file, f -> {
+            try {
+                return f.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Checks whether the given file exists, and if not tries to create the
+     * directory using the given file creator
+     * @param file the file
+     * @param fileCreator the creator responsible for create the file
+     * @return whether the file has been created
+     */
+    private static boolean ensureFileExistence(File file,
+                                               Function<File, Boolean> fileCreator) {
+        return exists(file) || fileCreator.apply(file);
+    }
 
     /**
      * Copies a file from a resource to a target output stream.
@@ -78,11 +117,11 @@ public class FileUtil {
 
     /**
      * Returns whether a file/directory exists.
-     * @param path the path of the file
+     * @param file the path of the file
      * @return whether the file exists
      */
-    public static boolean exists(File path) {
-        return path != null && path.exists();
+    public static boolean exists(File file) {
+        return file != null && file.exists();
     }
 
     /**
@@ -144,6 +183,16 @@ public class FileUtil {
 
     /**
      * Writes the given content to a file.
+     * @param file the file
+     * @param content the content to write
+     * @return true if the file has been written successfully
+     */
+    public static boolean write(File file, String content) {
+        return file != null && write(file.getAbsolutePath(), content);
+    }
+
+    /**
+     * Writes the given content to a file.
      * @param path the path of the file
      * @param content the content to write
      * @return true if the file has been written successfully
@@ -158,7 +207,6 @@ public class FileUtil {
             return false;
         }
     }
-
 
     /**
      * Reads the resource at the given path.
@@ -188,6 +236,15 @@ public class FileUtil {
      */
     public static String readFile(String path) {
         return readFile(path, ENDL);
+    }
+
+    /**
+     * Reads the content of a file at the given path.
+     * @param file the file to read
+     * @return the content to the file
+     */
+    public static String readFile(File file) {
+        return readFile(file, ENDL);
     }
 
     /**
