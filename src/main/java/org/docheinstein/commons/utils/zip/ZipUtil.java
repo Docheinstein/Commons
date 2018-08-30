@@ -43,7 +43,7 @@ public class ZipUtil {
                 if (!entryFile.exists())
                     if (!entryFile.mkdirs()) {
                         L.out("Creation of directory has failed while extracting zip");
-                        throw new IOException("Failed to create directories needed for zip extraction");
+                        throw new IOException("Failed to createRequest directories needed for zip extraction");
                     }
             }
         }

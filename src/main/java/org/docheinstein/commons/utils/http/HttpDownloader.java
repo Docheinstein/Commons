@@ -1,5 +1,7 @@
 package org.docheinstein.commons.utils.http;
 
+import org.docheinstein.commons.internal.DocCommonsLogger;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +9,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Provides utilities for request and download resources over http connection.
+ * Entity responsible for download resources via HTTP.
  */
-public class HttpUtil {
+public class HttpDownloader {
+    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{HTTP_DOWNLOADER}");
+
+    private static final String DEFAULT_USER_AGENT =
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1";
+
+    /**
+     * Whether there is need to continue the download.
+     * <p>
+     * False if download is aborted.
+     **/
+    private boolean mDownloadEnabled = true;
 
     /**
      * Interface used for listen to download progress.
@@ -20,7 +33,7 @@ public class HttpUtil {
          * The byte delay between consecutive calls of this method is defined
          * by the parameter passed to {@link #download(String, String, String,
          * DownloadObserver, int)}
-         * @param downloadedBytes
+         * @param downloadedBytes the downloaded byte amount
          */
         void onProgress(long downloadedBytes);
     }
@@ -34,9 +47,14 @@ public class HttpUtil {
      * @see #download(String, String, DownloadObserver, int)
      * @see #download(String, String, String, DownloadObserver, int)
      */
-    public static void download(String urlString,
+    public void download(String urlString,
                                 String outputPath) throws IOException {
-
+        download(
+            urlString,
+            outputPath,
+            null,
+            0
+        );
     }
 
     /**
@@ -50,14 +68,14 @@ public class HttpUtil {
      *
      * @see #download(String, String, String, DownloadObserver, int)
      */
-    public static void download(String urlString,
+    public void download(String urlString,
                                 String outputPath,
                                 DownloadObserver observer,
                                 int bytesBetweenCallbacks) throws IOException {
         download(
             urlString,
             outputPath,
-            "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1",
+            DEFAULT_USER_AGENT,
             observer,
             bytesBetweenCallbacks);
     }
@@ -74,11 +92,16 @@ public class HttpUtil {
      *
      * @see #download(String, String, String, DownloadObserver, int)
      */
-    public static void download(String urlString,
+    public void download(String urlString,
                                 String outputPath,
                                 String userAgent,
                                 DownloadObserver observer,
                                 int bytesBetweenCallbacks) throws IOException {
+
+        if (!mDownloadEnabled) {
+            L.out("Download is not enabled, doing nothing");
+            return;
+        }
 
         final int BUFFER_SIZE = 4096;
 
@@ -87,19 +110,19 @@ public class HttpUtil {
         FileOutputStream fos = null;
 
         try {
-            HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setRequestProperty("User-Agent", userAgent);
-            urlConn.setRequestMethod("GET");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("User-Agent", userAgent);
+            connection.setRequestMethod("GET");
 
-            urlConn.connect();
-            int code = urlConn.getResponseCode();
+            connection.connect();
+            int code = connection.getResponseCode();
 
             if (code < 200 || code >= 400) {
                 outputPath = "download-error-" + System.currentTimeMillis() + ".txt";
-                is = urlConn.getErrorStream();
+                is = connection.getErrorStream();
             }
             else
-                is = urlConn.getInputStream();
+                is = connection.getInputStream();
 
             fos = new FileOutputStream(outputPath);
 
@@ -109,11 +132,12 @@ public class HttpUtil {
             int len;
 
             // Download and write to the local file until data is available
-            while ((len = is.read(buffer)) > 0) {
+            while (mDownloadEnabled && (len = is.read(buffer)) > 0) {
                 totalLength += len;
 
                 fos.write(buffer, 0, len);
 
+                // Notify download progression
                 if (observer != null) {
                     if (totalLength - lastCallbackLength > bytesBetweenCallbacks) {
                         lastCallbackLength = totalLength;
@@ -121,6 +145,7 @@ public class HttpUtil {
                     }
                 }
             }
+            connection.disconnect();
         } finally {
             try {
                 if (is != null) {
@@ -135,109 +160,13 @@ public class HttpUtil {
     }
 
     /**
-     * Creates an http requester.
-     * @return an http requester
+     * Whether this entity should or should not download resource.
+     * <p>
+     * If this is set to false while a download is in progress it will be
+     * aborted.
+     * @param downloadEnabled whether enable download
      */
-    public static HttpRequester create() {
-        return new HttpRequester();
-    }
-
-    /**
-     * Creates an http requester for the given request method.
-     * @param method the request method
-     * @return an http requester
-     */
-    public static HttpRequester create(HttpRequester.RequestMethod method) {
-        return create().method(method);
-    }
-
-    /**
-     * Creates an http requester for the request method 'HEAD'.
-     * @return an http requester
-     */
-    public static HttpRequester head() {
-        return create(HttpRequester.RequestMethod.HEAD);
-    }
-
-    /**
-     * Creates an http requester for the request method 'GET'.
-     * @return an http requester
-     */
-    public static HttpRequester get() {
-        return create(HttpRequester.RequestMethod.GET);
-    }
-
-    /**
-     * Creates an http requester for the request method 'POST'.
-     * @return an http requester
-     */
-    public static HttpRequester post() {
-        return create(HttpRequester.RequestMethod.POST);
-    }
-
-    /**
-     * Creates an http requester for the request method 'DELETE'.
-     * @return an http requester
-     */
-    public static HttpRequester delete() {
-        return create(HttpRequester.RequestMethod.DELETE);
-    }
-
-    /**
-     * Creates an http requester for the request method 'PUT'.
-     * @return an http requester
-     */
-    public static HttpRequester put() {
-        return create(HttpRequester.RequestMethod.PUT);
-    }
-
-    /**
-     * Creates an http requester for the request method 'HEAD' for the
-     * given uri.
-     * @param uri an uri
-     * @return an http requester
-     */
-    public static HttpRequester head(String uri) {
-        return head().uri(uri);
-    }
-
-    /**
-     * Creates an http requester for the request method 'GET' for the
-     * given uri.
-     * @param uri an uri
-     * @return an http requester
-     */
-    public static HttpRequester get(String uri) {
-        return get().uri(uri);
-    }
-
-    /**
-     * Creates an http requester for the request method 'POST' for the
-     * given uri.
-     * @param uri an uri
-     * @return an http requester
-     */
-    public static HttpRequester post(String uri) {
-        return post().uri(uri);
-    }
-
-    /**
-     * Creates an http requester for the request method 'DELETE' for the
-     * given uri.
-     * @param uri an uri
-     * @return an http requester
-     */
-    public static HttpRequester delete(String uri) {
-        return delete().uri(uri);
-    }
-
-    /**
-     * Creates an http requester for the request method 'PUT' for the
-     * given uri.
-     * @param uri an uri
-     * @return an http requester
-     */
-    public static HttpRequester put(String uri) {
-        return put().uri(uri);
+    public void enableDownload(boolean downloadEnabled) {
+        mDownloadEnabled = downloadEnabled;
     }
 }

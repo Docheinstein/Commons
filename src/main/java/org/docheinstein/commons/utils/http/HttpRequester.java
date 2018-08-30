@@ -98,7 +98,7 @@ public class HttpRequester {
         }
     }
 
-    private HttpURLConnection mConnection;
+    private HttpURLConnection mConnection = null;
 
     // Defaults
     private RequestMethod mMethod = RequestMethod.GET;
@@ -118,7 +118,7 @@ public class HttpRequester {
      * Creates an http requester.
      * @return an http requester
      */
-    public static HttpRequester create() {
+    public static HttpRequester createRequest() {
         return new HttpRequester();
     }
 
@@ -127,8 +127,8 @@ public class HttpRequester {
      * @param method the request method
      * @return an http requester
      */
-    public static HttpRequester create(HttpRequester.RequestMethod method) {
-        return create().method(method);
+    public static HttpRequester createRequest(HttpRequester.RequestMethod method) {
+        return createRequest().method(method);
     }
 
     /**
@@ -136,7 +136,7 @@ public class HttpRequester {
      * @return an http requester
      */
     public static HttpRequester head() {
-        return create(HttpRequester.RequestMethod.HEAD);
+        return createRequest(HttpRequester.RequestMethod.HEAD);
     }
 
     /**
@@ -144,7 +144,7 @@ public class HttpRequester {
      * @return an http requester
      */
     public static HttpRequester get() {
-        return create(HttpRequester.RequestMethod.GET);
+        return createRequest(HttpRequester.RequestMethod.GET);
     }
 
     /**
@@ -152,7 +152,7 @@ public class HttpRequester {
      * @return an http requester
      */
     public static HttpRequester post() {
-        return create(HttpRequester.RequestMethod.POST);
+        return createRequest(HttpRequester.RequestMethod.POST);
     }
 
     /**
@@ -160,7 +160,7 @@ public class HttpRequester {
      * @return an http requester
      */
     public static HttpRequester delete() {
-        return create(HttpRequester.RequestMethod.DELETE);
+        return createRequest(HttpRequester.RequestMethod.DELETE);
     }
 
     /**
@@ -168,7 +168,7 @@ public class HttpRequester {
      * @return an http requester
      */
     public static HttpRequester put() {
-        return create(HttpRequester.RequestMethod.PUT);
+        return createRequest(HttpRequester.RequestMethod.PUT);
     }
 
     /**
@@ -320,7 +320,7 @@ public class HttpRequester {
     }
 
     /**
-     * Actually create the underlying {@link HttpURLConnection} that can be
+     * Actually createRequest the underlying {@link HttpURLConnection} that can be
      * retrieved via {@link #getUnderlyingConnection()}
      * @return
      */

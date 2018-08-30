@@ -1,7 +1,5 @@
 import org.docheinstein.commons.utils.http.HttpRequester;
-import org.docheinstein.commons.utils.http.HttpUtil;
 
-import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +8,7 @@ public class UtilTest {
 
         // FileUtil.deleteRecursive("/tmp/_.Y");
 
-        String direct = HttpUtil
+        String direct = HttpRequester
             .head("https://openload.co/stream/cZwIjzPELAM~1535622523~109.168.0.0~Y-rcs13M")
             .allowRedirect(false)
             .send()
@@ -19,7 +17,7 @@ public class UtilTest {
 
         System.out.println("\n\nDirect: " + direct);
 
-        printHeaderFields(HttpUtil
+        printHeaderFields(HttpRequester
             .head(direct)
             .allowRedirect(false)
             .initialized()

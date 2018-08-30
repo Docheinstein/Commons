@@ -21,7 +21,7 @@ public class TimeUtil {
      * Returns the string that is composed using the current millis and
      * the given pattern.
      * @param pattern the date/time pattern
-     * @return the string that uses the current millis for create the given pattern
+     * @return the string that uses the current millis for createRequest the given pattern
      *
      * @see #millisToString(String, long)
      * @see #dateToString(String, Date, TimeZone)
@@ -35,7 +35,7 @@ public class TimeUtil {
      * the given pattern.
      * @param pattern the date/time pattern
      * @param millis the amount of millis the pattern is created with
-     * @return the string that uses the millis for create the given pattern
+     * @return the string that uses the millis for createRequest the given pattern
      *
      * @see #millisToString(String)
      * @see #dateToString(String, Date, TimeZone)
