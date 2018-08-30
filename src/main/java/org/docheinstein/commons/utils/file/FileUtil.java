@@ -17,7 +17,7 @@ public class FileUtil {
      * @param folder the folder
      * @return whether the folders have been created
      */
-    private static boolean ensureFolderExistence(File folder) {
+    public static boolean ensureFolderExistence(File folder) {
         return exists(folder) || folder.mkdirs();
     }
 
@@ -27,7 +27,7 @@ public class FileUtil {
      * @param file the file
      * @return whether the file has been created
      */
-    private static boolean ensureFileExistence(File file) {
+    public static boolean ensureFileExistence(File file) {
         return ensureFileExistence(file, f -> {
             try {
                 return f.createNewFile();
@@ -44,7 +44,7 @@ public class FileUtil {
      * @param fileCreator the creator responsible for create the file
      * @return whether the file has been created
      */
-    private static boolean ensureFileExistence(File file,
+    public static boolean ensureFileExistence(File file,
                                                Function<File, Boolean> fileCreator) {
         return exists(file) || fileCreator.apply(file);
     }
