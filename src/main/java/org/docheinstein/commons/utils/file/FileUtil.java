@@ -281,13 +281,14 @@ public class FileUtil {
 
             // Read the first line outside the cycle in order not to add ENDL at the EOF
             line = bufferedReader.readLine();
-            stringBuilder.append(line);
-
-            while ( (line = bufferedReader.readLine()) != null) {
-                // L.debug(LOGGER_TAG, "Reading line:" + line);
-                stringBuilder.append(lineSeparator);
+            if (line != null) {
                 stringBuilder.append(line);
 
+                while ((line = bufferedReader.readLine()) != null) {
+                    // L.debug(LOGGER_TAG, "Reading line:" + line);
+                    stringBuilder.append(lineSeparator);
+                    stringBuilder.append(line);
+                }
             }
             return stringBuilder.toString();
         } catch (IOException e) {

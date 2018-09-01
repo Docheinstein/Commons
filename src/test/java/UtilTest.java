@@ -1,3 +1,4 @@
+import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.http.HttpRequester;
 
 import java.util.List;
@@ -8,24 +9,33 @@ public class UtilTest {
 
         // FileUtil.deleteRecursive("/tmp/_.Y");
 
-        String direct = HttpRequester
-            .head("https://openload.co/stream/cZwIjzPELAM~1535622523~109.168.0.0~Y-rcs13M")
-            .allowRedirect(false)
-            .send()
-            .getHeaderFields()
-            .get("Location").get(0);
+//        String direct = HttpRequester
+//            .head("https://openload.co/stream/cZwIjzPELAM~1535622523~109.168.0.0~Y-rcs13M")
+//            .allowRedirect(false)
+//            .send()
+//            .getHeaderFields()
+//            .get("Location").get(0);
+//
+//        System.out.println("\n\nDirect: " + direct);
+//
+//        printHeaderFields(HttpRequester
+//            .head(direct)
+//            .allowRedirect(false)
+//            .initialized()
+//            .userAgent("curl/7.52.1")
+//            .accept("*/*")
+//            .send()
+//            .getHeaderFields()
+//        );
 
-        System.out.println("\n\nDirect: " + direct);
 
-        printHeaderFields(HttpRequester
-            .head(direct)
-            .allowRedirect(false)
-            .initialized()
-            .userAgent("curl/7.52.1")
-            .accept("*/*")
-            .send()
-            .getHeaderFields()
-        );
+        String s = FileUtil.readFile("/tmp/empty");
+        if (s == null)
+            System.out.println("Got null");
+        else if (s.isEmpty())
+            System.out.println("Got empty");
+        else
+            System.out.println(s);
     }
 
     private static void printHeaderFields(Map<String, List<String>> headerFields) {
