@@ -30,12 +30,20 @@ public class HttpDownloader {
     public interface DownloadObserver {
         /**
          * Called on download's progress.
+         * <p>
          * The byte delay between consecutive calls of this method is defined
          * by the parameter passed to {@link #download(String, String, String,
          * DownloadObserver, int)}
          * @param downloadedBytes the downloaded byte amount
          */
         void onProgress(long downloadedBytes);
+
+        /**
+         * Called when the download is finished successfully.
+         * <p>
+         * This method is not call if the download is aborted.
+         */
+        void onEnd();
     }
 
     /**
@@ -146,6 +154,10 @@ public class HttpDownloader {
                 }
             }
             connection.disconnect();
+
+            // Notify the observer about download end (if the download is not aborted)
+            if (mDownloadEnabled && observer != null)
+                observer.onEnd();
         } finally {
             try {
                 if (is != null) {
