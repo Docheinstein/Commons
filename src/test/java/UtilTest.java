@@ -1,5 +1,7 @@
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.http.HttpRequester;
+import org.docheinstein.commons.utils.logger.DocLogger;
+import org.docheinstein.commons.utils.time.TimeUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -39,16 +41,30 @@ public class UtilTest {
 //        else
 //            System.out.println(s);
 
-        File dir = new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/");
+//        File dir = new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/");
+//
+//        File[] files = dir.listFiles();
+//
+//        Arrays.sort(files, File::compareTo);
+//
+//        FileUtil.mergeFiles(
+//            new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/merge_test.ts"),
+//            files
+//        );
 
-        File[] files = dir.listFiles();
-
-        Arrays.sort(files, File::compareTo);
-
-        FileUtil.mergeFiles(
-            new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/merge_test.ts"),
-            files
+//        System.out.println(System.getProperty("os.name"));
+        DocLogger.enableLoggingOnFiles(
+            new File("/tmp/"),
+            () -> TimeUtil.dateToString("yyyy_MM_dd") + ".log",
+            true
         );
+        DocLogger.enableLogLevel(DocLogger.LogLevel.Verbose, true, false);
+        DocLogger L = DocLogger.createForTag("{TestLogger}");
+
+        L.debug("This is a debug test");
+
+        L.verbose("This is a verbose test");
+
     }
 
     private static void printHeaderFields(Map<String, List<String>> headerFields) {

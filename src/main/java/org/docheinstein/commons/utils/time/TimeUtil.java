@@ -15,6 +15,8 @@ public class TimeUtil {
     public static class Patterns {
         public static final String DATE_TIME = "dd/MM/yyyy HH:mm:ss";
         public static final String TIME = "HH:mm:ss";
+
+        public static final String DATE_CHRONOLOGICALLY_SORTABLE = "yyyy_MM_dd";
     }
 
     /**
