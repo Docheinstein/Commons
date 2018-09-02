@@ -290,6 +290,7 @@ public class DocLogger implements LoggerCapable {
 
             try {
                 sWriter.write(logMessage);
+                sWriter.newLine();
                 if (sFlush)
                     sWriter.flush();
             } catch (IOException e) {
