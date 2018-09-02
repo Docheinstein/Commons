@@ -5,7 +5,7 @@ import org.docheinstein.commons.utils.types.StringUtil;
 import java.util.Locale;
 
 public class SystemUtil {
-    public OSType getCurrentOperatingSystemType() {
+    public static OSType getCurrentOperatingSystemType() {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 
         if (!StringUtil.isValid(osName))
