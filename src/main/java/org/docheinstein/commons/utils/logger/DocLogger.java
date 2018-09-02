@@ -14,7 +14,6 @@ import java.util.function.Supplier;
  * is able to print messages with different log levels.
  */
 public class DocLogger implements LoggerCapable {
-
     /** Level of logging. */
     public enum LogLevel {
         Verbose("V", System.out),
@@ -40,6 +39,18 @@ public class DocLogger implements LoggerCapable {
         // Enables all the log level by default
         for (LogLevel lv : LogLevel.values())
             enableLogLevel(lv, true);
+
+        // Flush before quit
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            BufferedWriter writer = getLoggingFileWriter();
+            if (writer != null) {
+                try {
+                    writer.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }));
     }
 
     /**
@@ -313,6 +324,10 @@ public class DocLogger implements LoggerCapable {
 
         if (!newLoggingFileName.equals(sCurrentLoggingFileName))
             initLoggingFileWriter();
+    }
+
+    private static BufferedWriter getLoggingFileWriter() {
+        return sWriter;
     }
 }
 

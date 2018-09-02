@@ -55,15 +55,13 @@ public class UtilTest {
 //        System.out.println(System.getProperty("os.name"));
         DocLogger.enableLoggingOnFiles(
             new File("/tmp/"),
-            () -> TimeUtil.dateToString("yyyy_MM_dd") + ".log",
-            true
+            () -> TimeUtil.dateToString("yyyy_MM_dd") + ".log2",
+            false
         );
         DocLogger.enableLogLevel(DocLogger.LogLevel.Verbose, true, false);
         DocLogger L = DocLogger.createForTag("{TestLogger}");
 
-        L.debug("This is a debug test");
-
-        L.verbose("This is a verbose test");
+        L.debug("This is AAAA debug test");
 
     }
 
