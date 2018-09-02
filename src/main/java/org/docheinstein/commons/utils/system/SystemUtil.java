@@ -4,7 +4,15 @@ import org.docheinstein.commons.utils.types.StringUtil;
 
 import java.util.Locale;
 
+/**
+ * Provides utilities for the system
+ */
 public class SystemUtil {
+
+    /**
+     * Returns the current operating system type this JVM runs on.
+     * @return the current operating system
+     */
     public static OSType getCurrentOperatingSystemType() {
         String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 
