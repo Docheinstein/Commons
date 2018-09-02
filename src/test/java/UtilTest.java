@@ -1,6 +1,8 @@
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.http.HttpRequester;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,13 +31,24 @@ public class UtilTest {
 //        );
 
 
-        String s = FileUtil.readFile("/tmp/empty");
-        if (s == null)
-            System.out.println("Got null");
-        else if (s.isEmpty())
-            System.out.println("Got empty");
-        else
-            System.out.println(s);
+//        String s = FileUtil.readFile("/tmp/empty");
+//        if (s == null)
+//            System.out.println("Got null");
+//        else if (s.isEmpty())
+//            System.out.println("Got empty");
+//        else
+//            System.out.println(s);
+
+        File dir = new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/");
+
+        File[] files = dir.listFiles();
+
+        Arrays.sort(files, File::compareTo);
+
+        FileUtil.mergeFiles(
+            new File("/home/stefano/Develop/Java/AnimeDownloader/tmp/complete/merge_test.ts"),
+            files
+        );
     }
 
     private static void printHeaderFields(Map<String, List<String>> headerFields) {

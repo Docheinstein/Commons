@@ -1,6 +1,12 @@
 package org.docheinstein.commons.utils.file;
 
+import org.docheinstein.commons.internal.DocCommonsLogger;
+
 import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 import java.util.function.Function;
 
@@ -8,6 +14,8 @@ import java.util.function.Function;
  * Provides utilities for files.
  */
 public class FileUtil {
+
+    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{FILE_UTIL}");
 
     private static final String ENDL = System.getProperty("line.separator");
 
@@ -304,5 +312,58 @@ public class FileUtil {
                 return null;
             }
         }
+    }
+
+    /**
+     * Merges the inputs file into a single output file by concatenate them.
+     * <p>
+     * The merge operation doesn't read line per line, but instead transfers the
+     * byte content directly.
+     * @param output the output file
+     * @param inputs the input files
+     * @see #mergeFiles(File, File...)
+     */
+    public static void mergeFiles(String output, String ...inputs) {
+        Path outPath = Paths.get(output);
+        try {
+            FileChannel outChannel = FileChannel.open(
+                outPath,
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE
+            );
+
+            for (String input : inputs) {
+
+                Path inPath = Paths.get(input);
+                FileChannel inChannel = FileChannel.open(inPath, StandardOpenOption.READ);
+
+                long transferred = 0;
+                long inputSize = inChannel.size();
+
+                L.out("Transferring content from " + inPath);
+                while (transferred < inputSize)
+                    transferred += inChannel.transferTo(transferred,
+                        inputSize - transferred /*  remaining bytes */,
+                        outChannel);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Merges the inputs file into a single output file by concatenate them.
+     * <p>
+     * The merge operation doesn't read line per line, but instead transfers the
+     * byte content directly.
+     * @param output the output file
+     * @param inputs the input files
+     * @see #mergeFiles(String, String...)
+     */
+    public static void mergeFiles(File output, File ...inputs) {
+        String[] strs = new String[inputs.length];
+        for (int i = 0; i < inputs.length; i++)
+            strs[i] = inputs[i].getAbsolutePath();
+
+        mergeFiles(output.getAbsolutePath(), strs);
     }
 }
