@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.asserts.Asserts;
 import org.docheinstein.commons.utils.logger.DocLogger;
 
@@ -21,7 +22,7 @@ import java.net.URL;
 /** Contains utility methods for Java FX. */
 public class FXUtil {
 
-    private static final DocLogger L = DocLogger.createForTag("{FX_UTIL}");
+    private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{FX_UTIL}");
 
     /**
      * Creates a new window using the given root element and title
@@ -123,7 +124,7 @@ public class FXUtil {
     public static Parent createNode(Object controller, URL fxml) {
         Asserts.assertNotNull(controller, "Can't bound to null controller");
 
-        L.debug("Creating node for FXML: " + fxml + " bound to controller " +
+        L.out("Creating node for FXML: " + fxml + " bound to controller " +
             controller.getClass().getSimpleName());
 
         FXMLLoader loader = new FXMLLoader(fxml);
@@ -132,7 +133,7 @@ public class FXUtil {
         try {
             node = loader.load();
         } catch (IOException e) {
-            L.error("Error occurred while loading FXML for URL: " + fxml, e);
+            L.out("Error occurred while loading FXML for URL: " + fxml + ": " + e.getMessage());
             return null;
         }
 
