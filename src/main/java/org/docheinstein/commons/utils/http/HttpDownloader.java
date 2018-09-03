@@ -36,7 +36,7 @@ public class HttpDownloader {
          * DownloadObserver, long)}
          * @param downloadedBytes the downloaded byte amount
          */
-        void onProgress(long downloadedBytes);
+        void onProgress(long downloadedBytes, long millis);
 
         /**
          * Called when the download is finished successfully.
@@ -71,7 +71,7 @@ public class HttpDownloader {
      * @param outputPath the output path where the download will be put
      * @param observer an optional observer used for listen to download progress
      * @param bytesBetweenCallbacks the amount of bytes between each callback
-     *                              of {@link DownloadObserver#onProgress(long)}
+     *                              of {@link DownloadObserver#onProgress(long, long)}
      * @throws IOException if the download fails
      *
      * @see #download(String, String, String, DownloadObserver, long)
@@ -95,7 +95,7 @@ public class HttpDownloader {
      * @param userAgent the user agent string to use for the request
      * @param observer an optional observer used for listen to download progress
      * @param bytesBetweenCallbacks the amount of bytes between each callback
-     *                              of {@link DownloadObserver#onProgress(long)}
+     *                              of {@link DownloadObserver#onProgress(long, long)}
      * @throws IOException if the download fails
      *
      * @see #download(String, String, String, DownloadObserver, long)
@@ -146,12 +146,12 @@ public class HttpDownloader {
                 fos.write(buffer, 0, len);
 
                 // Notify download progression
-                if (observer != null) {
-                    if (totalLength - lastCallbackLength > bytesBetweenCallbacks) {
+                if (totalLength - lastCallbackLength > bytesBetweenCallbacks &&
+                    observer != null) {
                         lastCallbackLength = totalLength;
-                        observer.onProgress(totalLength);
-                    }
+                        observer.onProgress(totalLength, System.currentTimeMillis());
                 }
+
             }
             connection.disconnect();
 
