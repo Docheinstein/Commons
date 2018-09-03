@@ -33,7 +33,7 @@ public class HttpDownloader {
          * <p>
          * The byte delay between consecutive calls of this method is defined
          * by the parameter passed to {@link #download(String, String, String,
-         * DownloadObserver, int)}
+         * DownloadObserver, long)}
          * @param downloadedBytes the downloaded byte amount
          */
         void onProgress(long downloadedBytes);
@@ -53,7 +53,7 @@ public class HttpDownloader {
      * @throws IOException if the download fails
      *
      * @see #download(String, String, DownloadObserver, int)
-     * @see #download(String, String, String, DownloadObserver, int)
+     * @see #download(String, String, String, DownloadObserver, long)
      */
     public void download(String urlString,
                                 String outputPath) throws IOException {
@@ -74,7 +74,7 @@ public class HttpDownloader {
      *                              of {@link DownloadObserver#onProgress(long)}
      * @throws IOException if the download fails
      *
-     * @see #download(String, String, String, DownloadObserver, int)
+     * @see #download(String, String, String, DownloadObserver, long)
      */
     public void download(String urlString,
                                 String outputPath,
@@ -98,13 +98,13 @@ public class HttpDownloader {
      *                              of {@link DownloadObserver#onProgress(long)}
      * @throws IOException if the download fails
      *
-     * @see #download(String, String, String, DownloadObserver, int)
+     * @see #download(String, String, String, DownloadObserver, long)
      */
     public void download(String urlString,
                                 String outputPath,
                                 String userAgent,
                                 DownloadObserver observer,
-                                int bytesBetweenCallbacks) throws IOException {
+                                long bytesBetweenCallbacks) throws IOException {
 
         if (!mDownloadEnabled) {
             L.out("Download is not enabled, doing nothing");
