@@ -36,14 +36,7 @@ public class HttpDownloader {
          * DownloadObserver, long)}
          * @param downloadedBytes the downloaded byte amount
          */
-        void onProgress(long downloadedBytes, long millis);
-
-        /**
-         * Called when the download is finished successfully.
-         * <p>
-         * This method is not call if the download is aborted.
-         */
-        void onEnd();
+        void onProgress(long downloadedBytes);
     }
 
     /**
@@ -71,7 +64,7 @@ public class HttpDownloader {
      * @param outputPath the output path where the download will be put
      * @param observer an optional observer used for listen to download progress
      * @param bytesBetweenCallbacks the amount of bytes between each callback
-     *                              of {@link DownloadObserver#onProgress(long, long)}
+     *                              of {@link DownloadObserver#onProgress(long)}
      * @throws IOException if the download fails
      *
      * @see #download(String, String, String, DownloadObserver, long)
@@ -95,7 +88,7 @@ public class HttpDownloader {
      * @param userAgent the user agent string to use for the request
      * @param observer an optional observer used for listen to download progress
      * @param bytesBetweenCallbacks the amount of bytes between each callback
-     *                              of {@link DownloadObserver#onProgress(long, long)}
+     *                              of {@link DownloadObserver#onProgress(long)}
      * @throws IOException if the download fails
      *
      * @see #download(String, String, String, DownloadObserver, long)
@@ -149,15 +142,11 @@ public class HttpDownloader {
                 if (totalLength - lastCallbackLength > bytesBetweenCallbacks &&
                     observer != null) {
                         lastCallbackLength = totalLength;
-                        observer.onProgress(totalLength, System.currentTimeMillis());
+                        observer.onProgress(totalLength);
                 }
 
             }
             connection.disconnect();
-
-            // Notify the observer about download end (if the download is not aborted)
-            if (mDownloadEnabled && observer != null)
-                observer.onEnd();
         } finally {
             try {
                 if (is != null) {
