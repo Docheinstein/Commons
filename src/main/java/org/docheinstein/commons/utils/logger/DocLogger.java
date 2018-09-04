@@ -7,6 +7,7 @@ import org.docheinstein.commons.utils.types.StringUtil;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Supplier;
 
 /**
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
  * is able to print messages with different log levels.
  */
 public class DocLogger implements LoggerCapable {
+
     /** Level of logging. */
     public enum LogLevel {
         Verbose("V", System.out),
@@ -91,11 +93,23 @@ public class DocLogger implements LoggerCapable {
             "}";
     }
 
+    /**
+     * Enables/disables the given log level for stream and files logging.
+     * @param level the level
+     * @param enable whether the level should be enabled for both streams and files
+     * @see #enableLogLevel(LogLevel, boolean, boolean)
+     */
     public static void enableLogLevel(LogLevel level,
                                       boolean enable) {
         enableLogLevel(level, enable, enable);
     }
 
+    /**
+     * Enables/disables the given log level for stream and/or files logging.
+     * @param level the level
+     * @param enableOnStream whether the level should be enabled on streams
+     * @param enableOnFile whether the level should be enabled on files
+     */
     public static void enableLogLevel(LogLevel level,
                                       boolean enableOnStream,
                                       boolean enableOnFile) {
@@ -110,10 +124,20 @@ public class DocLogger implements LoggerCapable {
             sEnabledLogLevelsOnFile.remove(level);
     }
 
+    /**
+     * Returns whether the given log level is enabled for be printed on stdout/stderr.
+     * @param level the level to check
+     * @return whether the messages of the given log level are printed on streams.
+     */
     public static boolean isLogLevelEnabledOnStream(LogLevel level) {
         return sEnabledLogLevelsOnStream.contains(level);
     }
 
+    /**
+     * Returns whether the given log level is enabled for be printed on files.
+     * @param level the level to check
+     * @return whether the messages of the given log level are printed on files.
+     */
     public static boolean isLogLevelEnabledOnFile(LogLevel level) {
         return sEnabledLogLevelsOnFile.contains(level);
     }
@@ -145,6 +169,24 @@ public class DocLogger implements LoggerCapable {
      */
     public static boolean isLoggingOnFilesEnabled() {
         return sLogsFolder != null;
+    }
+
+    /**
+     * Adds the listener that will be notified when a new message is produced
+     * by this logger.
+     * @param listener the listener
+     */
+    public static void addListener(DocLoggerListener listener) {
+        if (listener != null)
+            sListeners.add(listener);
+    }
+
+    /**
+     * Removes the listener from the listener set of this logger's messages.
+     * @param listener the listener
+     */
+    public static void removeListener(DocLoggerListener listener) {
+        sListeners.remove(listener);
     }
 
     /**
@@ -183,6 +225,8 @@ public class DocLogger implements LoggerCapable {
     /** Whether the logging file should be flushed after each write */
     private static boolean sFlush;
 
+    private static Set<DocLoggerListener> sListeners = new CopyOnWriteArraySet<>();
+
     /** The tag of this logger. */
     private final String mTag;
 
@@ -194,6 +238,73 @@ public class DocLogger implements LoggerCapable {
         mTag = tag;
     }
 
+    // Static log methods
+
+    /**
+     * Prints the given message as a verbose message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void verbose(String tag, String message) {
+        log(tag, LogLevel.Verbose, message);
+    }
+
+    /**
+     * Prints the given message as a debug message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void debug(String tag, String message) {
+        log(tag, LogLevel.Debug, message);
+    }
+
+    /**
+     * Prints the given message as an info message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void info(String tag, String message) {
+        log(tag, LogLevel.Info, message);
+    }
+
+    /**
+     * Prints the given message as a warn message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void warn(String tag, String message) {
+        log(tag, LogLevel.Warn, message);
+    }
+
+    /**
+     * Prints the given message as an error message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void error(String tag, String message) {
+        log(tag, LogLevel.Error, message);
+    }
+
+    /**
+     * Prints the given message as a warn message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     * @param e the exception to print
+     */
+    public static void warn(String tag, String message, Exception e) {
+        log(tag, LogLevel.Warn, message + "\n" + StringUtil.toString(e));
+    }
+
+    /**
+     * Prints the given message as an error message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     * @param e the exception to print
+     */
+    public static void error(String tag, String message, Exception e) {
+        log(tag, LogLevel.Error, message + "\n" + StringUtil.toString(e));
+    }
+
     // Basic LoggerCapable log methods
 
     /**
@@ -202,7 +313,7 @@ public class DocLogger implements LoggerCapable {
      */
     @Override
     public void verbose(String message) {
-        log(mTag, LogLevel.Verbose, message);
+        verbose(mTag, message);
     }
 
     /**
@@ -211,7 +322,7 @@ public class DocLogger implements LoggerCapable {
      */
     @Override
     public void debug(String message) {
-        log(mTag, LogLevel.Debug, message);
+        debug(mTag, message);
     }
 
     /**
@@ -220,7 +331,7 @@ public class DocLogger implements LoggerCapable {
      */
     @Override
     public void info(String message) {
-        log(mTag, LogLevel.Info, message);
+        info(mTag, message);
     }
 
     /**
@@ -229,7 +340,7 @@ public class DocLogger implements LoggerCapable {
      */
     @Override
     public void warn(String message) {
-        log(mTag, LogLevel.Warn, message);
+        warn(mTag, message);
     }
 
     /**
@@ -238,7 +349,7 @@ public class DocLogger implements LoggerCapable {
      */
     @Override
     public void error(String message) {
-        log(mTag, LogLevel.Error, message);
+        error(mTag, message);
     }
 
     // Advanced log methods
@@ -249,7 +360,7 @@ public class DocLogger implements LoggerCapable {
      * @param e the exception
      */
     public void warn(String message, Exception e) {
-        warn(message + "\n" + StringUtil.toString(e));
+        warn(mTag, message, e);
     }
 
     /**
@@ -258,7 +369,7 @@ public class DocLogger implements LoggerCapable {
      * @param e the exception
      */
     public void error(String message, Exception e) {
-        error(message + "\n" + StringUtil.toString(e));
+        error(mTag, message, e);
     }
 
     /**
@@ -271,12 +382,13 @@ public class DocLogger implements LoggerCapable {
      * @param message the message
      */
     private static void log(String tag, LogLevel lv, String message) {
-        String logTime = TimeUtil.millisToString(
+        String logDate = TimeUtil.millisToString(
             TimeUtil.Patterns.DATE_TIME,
             System.currentTimeMillis()
         );
 
-        String logMessage = "[" + lv.identifier + "] " + logTime + " " + tag + " " + message;
+        String logMessageNoLevel = logDate + " " + tag + " " + message;
+        String logMessage = "[" + lv.identifier + "] " + logMessageNoLevel;
 
         // Logging on stream
 
@@ -297,6 +409,11 @@ public class DocLogger implements LoggerCapable {
                 e.printStackTrace();
             }
         }
+
+        // Notify listeners
+
+        for (DocLoggerListener listener : sListeners)
+            listener.onLoggerMessage(lv, logMessageNoLevel);
     }
 
     /**
@@ -306,7 +423,8 @@ public class DocLogger implements LoggerCapable {
     private static void initLoggingFileWriter() {
         try {
             sCurrentLoggingFileName = sLoggingFileNameSupplier.get();
-            FileWriter fw = new FileWriter(new File(sLogsFolder, sCurrentLoggingFileName), true);
+            FileWriter fw = new FileWriter(
+                new File(sLogsFolder, sCurrentLoggingFileName), true);
             if (sWriter != null)
                 sWriter.close();
             sWriter = new BufferedWriter(fw, 1024);
