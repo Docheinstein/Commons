@@ -80,17 +80,20 @@ public class DocLogger implements LoggerCapable {
     /**
      * Returns a tag for the given class.
      * <p>
-     * This is actually created by making all upper case, separating the
-     * upper case characters with underscores.
+     * This is actually created by making all upper case,
+     * separating the sequence of upper case characters with underscores.
      * @param clazz the class to use for define the tag
      * @return the tag associated with the given class
      */
     public static String getTagForClass(Class clazz) {
-        return "{" +
-            clazz.getSimpleName().replaceAll(
-                "(.)([A-Z]+)",
-                "$1_$2").toUpperCase() +
-            "}";
+        String tag = clazz.getSimpleName().replaceAll(
+            "([A-Z]*)([A-Z])([a-z]|[0-9])?",
+            "$1_$2$3"
+        ).toUpperCase();
+
+        return tag.startsWith("_") ?
+            "{" + tag.substring(1) + "}" :
+            "{" + tag + "}";
     }
 
     /**

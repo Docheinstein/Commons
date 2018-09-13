@@ -12,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.asserts.Asserts;
-import org.docheinstein.commons.utils.logger.DocLogger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

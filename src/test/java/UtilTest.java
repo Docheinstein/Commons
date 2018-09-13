@@ -3,6 +3,7 @@ import org.docheinstein.commons.utils.http.HttpRequester;
 import org.docheinstein.commons.utils.logger.DocLogger;
 import org.docheinstein.commons.utils.time.TimeUtil;
 
+import javax.xml.ws.http.HTTPBinding;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -53,15 +54,18 @@ public class UtilTest {
 //        );
 
 //        System.out.println(System.getProperty("os.name"));
-        DocLogger.enableLoggingOnFiles(
-            new File("/tmp/"),
-            () -> TimeUtil.dateToString("yyyy_MM_dd") + ".log2",
-            false
-        );
-        DocLogger.enableLogLevel(DocLogger.LogLevel.Verbose, true, false);
-        DocLogger L = DocLogger.createForTag("{TestLogger}");
+//        DocLogger.enableLoggingOnFiles(
+//            new File("/tmp/"),
+//            () -> TimeUtil.dateToString("yyyy_MM_dd") + ".log2",
+//            false
+//        );
+//        DocLogger.enableLogLevel(DocLogger.LogLevel.Verbose, true, false);
+//        DocLogger L = DocLogger.createForTag("{TestLogger}");
+//
+//        L.debug("This is AAAA debug test");
 
-        L.debug("This is AAAA debug test");
+        DocLogger.createForClass(EnumConstantNotPresentException.class).debug("Ciao");
+        DocLogger.createForClass(HTTPBinding.class).debug("Ciao2");
 
     }
 
