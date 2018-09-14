@@ -63,9 +63,9 @@ public class UtilTest {
 //        DocLogger L = DocLogger.createForTag("{TestLogger}");
 //
 //        L.debug("This is AAAA debug test");
-
-        DocLogger.createForClass(EnumConstantNotPresentException.class).debug("Ciao");
-        DocLogger.createForClass(HTTPBinding.class).debug("Ciao2");
+//
+//        DocLogger.createForClass(EnumConstantNotPresentException.class).debug("Ciao");
+//        DocLogger.createForClass(HTTPBinding.class).debug("Ciao2");
 
     }
 
