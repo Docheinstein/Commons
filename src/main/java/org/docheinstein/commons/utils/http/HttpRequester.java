@@ -112,6 +112,7 @@ public class HttpRequester {
     private String mUserAgent = null;
     private String mAccept = null;
 
+    private int mConnectionTimeout = 0;
 
 
     /**
@@ -312,10 +313,22 @@ public class HttpRequester {
     }
 
     /**
+     * Sets the connection timeout.
+     * @param millis the amount of millis to wait before interrupt the connection
+     * @return the requester
+     */
+    public HttpRequester connectionTimeout(int millis) {
+        mConnectionTimeout = millis;
+        return this;
+    }
+
+    /**
      * Returns the underlying connection.
      * @return the underlying connection.
      */
     public HttpURLConnection getUnderlyingConnection() {
+        if (mConnection == null)
+            initialized();
         return mConnection;
     }
 
@@ -325,8 +338,10 @@ public class HttpRequester {
      * @return
      */
     public HttpRequester initialized() {
-        if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null)
-            L.out("Can't send request, please build HttpRequester with every mandatory field");
+        if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null) {
+            L.out("Can't initialize, please build HttpRequester with every mandatory field");
+            return this;
+        }
 
         L.out("Initializing with URI: " + mURI);
 
@@ -375,6 +390,10 @@ public class HttpRequester {
 
             // Redirect
             mConnection.setInstanceFollowRedirects(mRedirect);
+
+            // Connection timeout
+            if (mConnectionTimeout > 0)
+                mConnection.setConnectTimeout(mConnectionTimeout);
 
             if (StringUtil.isValid(mEncodedUserPass)) {
                 mConnection.setRequestProperty("Authorization", "Basic " + mEncodedUserPass);
