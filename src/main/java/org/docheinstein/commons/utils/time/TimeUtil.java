@@ -1,12 +1,20 @@
 package org.docheinstein.commons.utils.time;
 
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /** Contains utilities for time. */
 public class TimeUtil {
+
+    public static final long HOURS_IN_DAY = 24;
+    public static final long MIN_IN_DAY = HOURS_IN_DAY * 60;
+    public static final long SEC_IN_DAY = MIN_IN_DAY * 60;
+    public static final long MS_IN_DAY = SEC_IN_DAY * 1000;
 
     /**
      * Contains some common patterns that can be used
@@ -84,6 +92,26 @@ public class TimeUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         simpleDateFormat.setTimeZone(zone);
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * Returns the amount of millis between the current and the given time.
+     * @param t a time
+     * @return the millis between now and the time
+     */
+    public static long getMillisBetweenNowAndTime(Time t) {
+        Calendar now = Calendar.getInstance();
+
+        Date currentTimeInUnixOriginDate = new GregorianCalendar(1970, 0, 1,
+            now.get(Calendar.HOUR_OF_DAY),
+            now.get(Calendar.MINUTE),
+            now.get(Calendar.SECOND)).getTime();
+
+        long currentTimeInDayAfterUnixOriginDate = currentTimeInUnixOriginDate.getTime();
+        long timeInUnixOrigin = t.getTime();
+        return
+            (timeInUnixOrigin - currentTimeInDayAfterUnixOriginDate + MS_IN_DAY)
+                % MS_IN_DAY;
     }
 }
 
