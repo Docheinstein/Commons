@@ -338,7 +338,7 @@ public class HttpRequester {
      * @return
      */
     public HttpRequester initialized() {
-        if (!StringUtil.isValid(mURI) || mMethod == null || mContentType == null) {
+        if (!StringUtil.isValid(mURI) || mMethod == null) {
             L.out("Can't initialize, please build HttpRequester with every mandatory field");
             return this;
         }
