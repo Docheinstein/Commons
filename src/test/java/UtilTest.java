@@ -1,3 +1,4 @@
+import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.http.HttpRequester;
 import org.docheinstein.commons.utils.logger.DocLogger;
@@ -66,7 +67,6 @@ public class UtilTest {
 //
 //        DocLogger.createForClass(EnumConstantNotPresentException.class).debug("Ciao");
 //        DocLogger.createForClass(HTTPBinding.class).debug("Ciao2");
-
     }
 
     private static void printHeaderFields(Map<String, List<String>> headerFields) {

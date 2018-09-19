@@ -42,7 +42,7 @@ public class HttpRequester {
          * Returns the response code of the request.
          * @return the response code of the request
          */
-        public int getResponseCode() {
+        public Integer getResponseCode() {
             return mResponseCode;
         }
 
@@ -450,10 +450,13 @@ public class HttpRequester {
             return resp;
         } catch (ProtocolException e) {
             L.out("Protocol exception, not a valid request method: " + mMethod);
+            L.out(StringUtil.toString(e));
         } catch (MalformedURLException e) {
             L.out("Malformed URL exception, not a valid URI: " + mURI);
+            L.out(StringUtil.toString(e));
         } catch (IOException e) {
             L.out("IO exception, can't perform HTTP request");
+            L.out(StringUtil.toString(e));
         }
         return resp;
     }
