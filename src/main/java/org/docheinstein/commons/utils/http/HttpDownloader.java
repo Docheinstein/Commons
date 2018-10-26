@@ -86,13 +86,15 @@ public class HttpDownloader {
      * Download a resource from an url.
      * @param urlString the url to download
      * @param outputPath the output path where the download will be put
+     *
+     * @return whether the download has been completed successfully
      * @throws IOException if the download fails
      *
      * @see #download(String, String, DownloadObserver, int)
      */
-    public void download(String urlString,
+    public boolean download(String urlString,
                          String outputPath) throws IOException {
-        download(
+        return download(
             urlString,
             outputPath,
             null,
@@ -107,16 +109,17 @@ public class HttpDownloader {
      * @param observer an optional observer used for listen to download progress
      * @param bytesBetweenCallbacks the amount of bytes between each callback
      *                              of {@link DownloadObserver#onProgress(long)}
+     * @return whether the download has been completed successfully
      * @throws IOException if the download fails
      */
-    public void download(String urlString,
+    public boolean download(String urlString,
                          String outputPath,
                          DownloadObserver observer,
                          int bytesBetweenCallbacks) throws IOException {
 
         if (!mDownloadEnabled) {
             L.out("Download is not enabled, doing nothing");
-            return;
+            return false;
         }
 
         final int BUFFER_SIZE = 4096;
@@ -170,7 +173,11 @@ public class HttpDownloader {
             int len;
 
             // Download and write to the local file until data is available
-            while (mDownloadEnabled && (len = is.read(buffer)) > 0) {
+            while ((len = is.read(buffer)) > 0) {
+
+                if (!mDownloadEnabled)
+                    return false; // Download aborted
+
                 totalLength += len;
 
                 fos.write(buffer, 0, len);
@@ -195,6 +202,8 @@ public class HttpDownloader {
                 }
             }
         }
+
+        return true; // Download completed
     }
 
     /**
