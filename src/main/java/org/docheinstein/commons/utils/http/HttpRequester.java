@@ -335,7 +335,7 @@ public class HttpRequester {
     /**
      * Actually createRequest the underlying {@link HttpURLConnection} that can be
      * retrieved via {@link #getUnderlyingConnection()}
-     * @return
+     * @return the requester
      */
     public HttpRequester initialized() {
         if (!StringUtil.isValid(mURI) || mMethod == null) {

@@ -1,17 +1,48 @@
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.file.FileUtil;
+import org.docheinstein.commons.utils.http.HttpDownloader;
 import org.docheinstein.commons.utils.http.HttpRequester;
 import org.docheinstein.commons.utils.logger.DocLogger;
 import org.docheinstein.commons.utils.time.TimeUtil;
 
 import javax.xml.ws.http.HTTPBinding;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class UtilTest {
-    public static void main(String args[]) throws InterruptedException {
+
+    private static DocLogger L;
+
+    private static void initLogger() {
+        L =  DocLogger.createForTag("{DocUtilTest}");
+
+        DocCommonsLogger.enable(true);
+        DocLogger.enableLogLevel(DocLogger.LogLevel.Verbose, true, false);
+
+        DocCommonsLogger.addListener(L::debug);
+    }
+
+    public static void main(String args[]) throws InterruptedException, IOException {
+        initLogger();
+
+        final String URL = "https://1fhjluj.oloadcdn.net/dl/l/gs-ViQTIgZy4jH9D/9edEhCCpdSs/BlackClover_Ep_52_SUB_ITA.mp4";
+        final String OUTPUT = "/tmp/video_test.mp4";
+
+        L.debug("Going to download " + "https://1fiag0f.oloadcdn.net/dl/l");
+        new HttpDownloader().download(
+            URL,
+            OUTPUT,
+            new HttpDownloader.DownloadObserver() {
+                @Override
+                public void onProgress(long downloadedBytes) {
+                    L.debug("Downloaded " + downloadedBytes);
+                }
+            }, 1000 * 1000
+        );
+
 
         // FileUtil.deleteRecursive("/tmp/_.Y");
 
