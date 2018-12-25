@@ -308,6 +308,18 @@ public class DocLogger implements LoggerCapable {
         log(tag, LogLevel.Error, message + "\n" + StringUtil.toString(e));
     }
 
+    /**
+     * Flushes the file log now.
+     */
+    public static void flush() {
+        if (sWriter != null)
+            try {
+                sWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
     // Basic LoggerCapable log methods
 
     /**
@@ -373,18 +385,6 @@ public class DocLogger implements LoggerCapable {
      */
     public void error(String message, Exception e) {
         error(mTag, message, e);
-    }
-
-    /**
-     * Flushes the file log now.
-     */
-    public void flush() {
-        if (sWriter != null)
-            try {
-                sWriter.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
     }
 
     /**
