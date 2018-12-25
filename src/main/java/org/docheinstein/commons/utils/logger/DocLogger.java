@@ -376,6 +376,18 @@ public class DocLogger implements LoggerCapable {
     }
 
     /**
+     * Flushes the file log now.
+     */
+    public void flush() {
+        if (sWriter != null)
+            try {
+                sWriter.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+
+    /**
      * Prints the given message for the given log level using the given tag.
      * <p>
      * Eventually prints the message to the logging file, if logging on files
