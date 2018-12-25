@@ -309,7 +309,7 @@ public class DocLogger implements LoggerCapable {
     }
 
     /**
-     * Flushes the file log now.
+     * Flushes the file log right now.
      */
     public static void flush() {
         if (sWriter != null)
