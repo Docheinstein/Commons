@@ -290,7 +290,6 @@ public class DocLogger implements LoggerCapable {
 
     /**
      * Prints the given message as a warn message.
-     * @param tag the tag of the entity that produces this message
      * @param message the message
      * @param e the exception to print
      */
