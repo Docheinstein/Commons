@@ -397,7 +397,7 @@ public class DocLogger implements LoggerCapable {
      */
     private static void log(String tag, LogLevel lv, String message) {
         String logDate = TimeUtil.millisToString(
-            TimeUtil.Patterns.DATE_TIME,
+            TimeUtil.Patterns.DATE_TIME_SLASH,
             System.currentTimeMillis()
         );
 
