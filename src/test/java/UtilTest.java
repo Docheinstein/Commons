@@ -1,14 +1,8 @@
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.http.HttpDownloader;
-import org.docheinstein.commons.utils.http.HttpRequester;
 import org.docheinstein.commons.utils.logger.DocLogger;
-import org.docheinstein.commons.utils.time.TimeUtil;
-
-import javax.xml.ws.http.HTTPBinding;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,22 +20,30 @@ public class UtilTest {
     }
 
     public static void main(String args[]) throws InterruptedException, IOException {
-        initLogger();
+//        if (!FileUtil.move(
+//            "/home/stefano/Develop/Java/NexiController/NexiController.jar",
+//            "/home/stefano/Develop/Java/NexiController/exec/old_versions/nexi-controller-0.9.4-dev-2.jar")) {
+//            System.err.println("mv failed!!!");
+//        } else {
+//            System.out.println("Everything ok!");
+//        }
 
-        final String URL = "https://1fhjluj.oloadcdn.net/dl/l/gs-ViQTIgZy4jH9D/9edEhCCpdSs/BlackClover_Ep_52_SUB_ITA.mp4";
-        final String OUTPUT = "/tmp/video_test.mp4";
-
-        L.debug("Going to download " + "https://1fiag0f.oloadcdn.net/dl/l");
-        new HttpDownloader().download(
-            URL,
-            OUTPUT,
-            new HttpDownloader.DownloadObserver() {
-                @Override
-                public void onProgress(long downloadedBytes) {
-                    L.debug("Downloaded " + downloadedBytes);
-                }
-            }, 1000 * 1000
-        );
+//        initLogger();
+//
+//        final String URL = "https://1fhjluj.oloadcdn.net/dl/l/gs-ViQTIgZy4jH9D/9edEhCCpdSs/BlackClover_Ep_52_SUB_ITA.mp4";
+//        final String OUTPUT = "/tmp/video_test.mp4";
+//
+//        L.debug("Going to download " + "https://1fiag0f.oloadcdn.net/dl/l");
+//        new HttpDownloader().download(
+//            URL,
+//            OUTPUT,
+//            new HttpDownloader.DownloadObserver() {
+//                @Override
+//                public void onProgress(long downloadedBytes) {
+//                    L.debug("Downloaded " + downloadedBytes);
+//                }
+//            }, 1000 * 1000
+//        );
 
 
         // FileUtil.deleteRecursive("/tmp/_.Y");

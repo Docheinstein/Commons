@@ -111,7 +111,7 @@ public class FileUtil {
      * @return whether the file has been moved successfully
      */
     public static boolean move(File src, File dst) {
-        return exists(src) && exists(dst) && src.renameTo(dst);
+        return src.renameTo(dst);
     }
 
     /**
