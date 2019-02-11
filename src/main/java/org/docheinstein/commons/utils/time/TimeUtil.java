@@ -1,21 +1,25 @@
 package org.docheinstein.commons.utils.time;
 
-
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 /** Contains utilities for time. */
 public class TimeUtil {
 
-    public static final long HOURS_IN_DAY = 24;
-    public static final long MIN_IN_DAY = HOURS_IN_DAY * 60;
-    public static final long SEC_IN_DAY = MIN_IN_DAY * 60;
-    public static final long MS_IN_DAY = SEC_IN_DAY * 1000;
+    public static final int HOURS_IN_DAY = 24;
+    public static final int MIN_IN_DAY = HOURS_IN_DAY * 60;
+    public static final int SEC_IN_DAY = MIN_IN_DAY * 60;
+    public static final int MS_IN_DAY = SEC_IN_DAY * 1000;
 
+    public static final int MIN_IN_HOUR = 60;
+    public static final int SEC_IN_MIN = 60;
+    public static final int MS_IN_SEC = 1000;
+
+
+    public static final int MS_IN_MIN = SEC_IN_MIN * MS_IN_SEC;
+    public static final int MS_IN_HOUR = MIN_IN_HOUR * MS_IN_MIN;
     /**
      * Contains some common patterns that can be used
      * for the methods of this class.
@@ -29,90 +33,106 @@ public class TimeUtil {
     }
 
     /**
-     * Returns the string that is composed using the current millis and
-     * the given pattern.
-     * @param pattern the date/time pattern
-     * @return the string that uses the current millis for createRequest the given pattern
-     *
-     * @see #millisToString(String, long)
-     * @see #dateToString(String, Date, TimeZone)
+     * Simple entity that represents a time as it is in the form HH:mm:ss[.ms]
+     * (without zone, locale or other similar stuff).
      */
-    public static String millisToString(String pattern) {
-        return millisToString(pattern, System.currentTimeMillis());
+    public static class TimeStruct {
+        public int hour;
+        public int minute;
+        public int second;
+        public int millis;
+
+        public TimeStruct(int h, int m, int s, int ms) {
+            hour = h;
+            minute = m;
+            second = s;
+            millis = ms;
+        }
+
+
+        /**
+         * Converts this time to a string formatted 'HH:mm:ss[.ms]'
+         * The milliseconds field is omitted if it is 0.
+         * @return this time as string
+         */
+        @Override
+        public String toString() {
+            return
+                String.format("%02d", hour) + ":" +
+                String.format("%02d", minute) + ":" +
+                String.format("%02d", second) +
+                    (millis > 0 ? String.format(".%02d", millis ) : "")
+                ;
+        }
     }
 
     /**
      * Returns the string that is composed using the given millis and
      * the given pattern.
-     * @param pattern the date/time pattern
-     * @param millis the amount of millis the pattern is created with
-     * @return the string that uses the millis for createRequest the given pattern
      *
-     * @see #millisToString(String)
-     * @see #dateToString(String, Date, TimeZone)
+     * @param pattern the date/time pattern
+     * @param millis  the amount of millis the pattern is created with
+     * @return the string that uses the millis for createRequest the given pattern
+     * @see #datetimeToString(String, LocalDateTime)
+     * @see #nowToString(String)
      */
     public static String millisToString(String pattern, long millis) {
-        return dateToString(pattern, new Date(millis), TimeZone.getDefault());
+        return datetimeToString(
+            pattern,
+            LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(millis),
+                ZoneId.systemDefault()));
     }
 
     /**
      * Returns the string that is composed using the given pattern,
      * the default timezone and the current date.
-     * @param pattern the date/time pattern
-     * @return  the string that is composed using the given pattern,
-     *          the default timezone and the current date
      *
-     * @see #dateToString(String, Date, TimeZone)
+     * @param pattern the date/time pattern
+     * @return the string that is composed using the given pattern,
+     * the default timezone and the current date
+     * @see #millisToString(String, long)
+     * @see #datetimeToString(String, LocalDateTime)
      */
-    public static String dateToString(String pattern) {
-        return dateToString(pattern, new Date());
+    public static String nowToString(String pattern) {
+        return datetimeToString(pattern, LocalDateTime.now());
     }
 
     /**
-     * Returns the string that is composed using the given pattern, date
-     * and the default timezone.
-     * @param pattern the date/time pattern
-     * @param date the date
-     * @return  the string that is composed using the given pattern, date and
-     *          the default timezone
+     * Returns the string that is composed using the given pattern, date.
      *
-     * @see #dateToString(String, Date, TimeZone)
+     * @param pattern  the date/time pattern
+     * @param datetime the datetime
+     * @return the string that is composed using the given pattern, date
      */
-    public static String dateToString(String pattern, Date date) {
-        return dateToString(pattern, date, TimeZone.getDefault());
+    public static String datetimeToString(String pattern, LocalDateTime datetime) {
+        DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
+        return datetime.format(f);
     }
 
     /**
-     * Returns the string that is composed using the given pattern, date and timezone.
-     * @param pattern the date/time pattern
-     * @param date the date
-     * @param zone the timezone
-     * @return the string that is composed using the given pattern, date and timezone
+     * Converts an amount of millis to a time struct.
+     * @param millis the amount of millis
+     * @return the time struct associated with the given amount
      */
-    public static String dateToString(String pattern, Date date, TimeZone zone) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        simpleDateFormat.setTimeZone(zone);
-        return simpleDateFormat.format(date);
+    public static TimeStruct millisToTime(long millis) {
+        return new TimeStruct(
+            (int) (millis / MS_IN_HOUR),
+            (int) (millis % MS_IN_HOUR / MS_IN_MIN),
+            (int) (millis % MS_IN_MIN / MS_IN_SEC),
+            (int) (millis % MS_IN_SEC)
+        );
     }
 
     /**
-     * Returns the amount of millis between the current and the given time.
-     * @param t a time
-     * @return the millis between now and the time
+     * Converts an amount of seconds to a time struct.
+     * @param seconds the amount of millis
+     * @return the time struct associated with the given amount
+     *
+     * @see #millisToTime(long)
      */
-    public static long getMillisBetweenNowAndTime(Time t) {
-        Calendar now = Calendar.getInstance();
-
-        Date currentTimeInUnixOriginDate = new GregorianCalendar(1970, 0, 1,
-            now.get(Calendar.HOUR_OF_DAY),
-            now.get(Calendar.MINUTE),
-            now.get(Calendar.SECOND)).getTime();
-
-        long currentTimeInDayAfterUnixOriginDate = currentTimeInUnixOriginDate.getTime();
-        long timeInUnixOrigin = t.getTime();
-        return
-            (timeInUnixOrigin - currentTimeInDayAfterUnixOriginDate + MS_IN_DAY)
-                % MS_IN_DAY;
+    public static TimeStruct secondsToTime(long seconds) {
+        return millisToTime(seconds * 1000);
     }
 }
 

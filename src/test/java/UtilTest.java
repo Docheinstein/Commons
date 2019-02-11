@@ -1,7 +1,9 @@
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.file.FileUtil;
-import org.docheinstein.commons.utils.http.HttpDownloader;
 import org.docheinstein.commons.utils.logger.DocLogger;
+import org.docheinstein.commons.utils.zip.ZipUtil;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,13 @@ public class UtilTest {
     }
 
     public static void main(String args[]) throws InterruptedException, IOException {
+        initLogger();
+//        ZipUtil.unzip(new File("/tmp/panel_bundle.zip"), new File("/tmp/panel_bundle/"));
+        ZipUtil.zip(new File("/tmp/t/panel_bundle"), new File("/tmp/t/panel_bundle_copy.zip"));
+//        ZipUtil.unzip(UtilTest.class.getResourceAsStream("panel_bundle.zip"), new File("/tmp/panel_bundle_from_res/"));
+
+//        System.out.println(TimeUtil.millisToTime(11405252));
+//        System.out.println(TimeUtil.secondsToTime(11405));
 //        if (!FileUtil.move(
 //            "/home/stefano/Develop/Java/NexiController/NexiController.jar",
 //            "/home/stefano/Develop/Java/NexiController/exec/old_versions/nexi-controller-0.9.4-dev-2.jar")) {
