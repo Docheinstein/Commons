@@ -1,5 +1,7 @@
 package org.docheinstein.commons.utils.time;
 
+import org.docheinstein.commons.utils.types.StringUtil;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,18 +10,20 @@ import java.time.format.DateTimeFormatter;
 /** Contains utilities for time. */
 public class TimeUtil {
 
-    public static final int HOURS_IN_DAY = 24;
-    public static final int MIN_IN_DAY = HOURS_IN_DAY * 60;
-    public static final int SEC_IN_DAY = MIN_IN_DAY * 60;
-    public static final int MS_IN_DAY = SEC_IN_DAY * 1000;
-
-    public static final int MIN_IN_HOUR = 60;
-    public static final int SEC_IN_MIN = 60;
     public static final int MS_IN_SEC = 1000;
+    public static final int SEC_IN_MIN = 60;
+    public static final int MIN_IN_HOUR = 60;
+    public static final int HOURS_IN_DAY = 24;
 
+    public static final int MS_IN_MIN = MS_IN_SEC * SEC_IN_MIN;
+    public static final int MS_IN_HOUR = MS_IN_MIN * MIN_IN_HOUR;
+    public static final int MS_IN_DAY = MS_IN_HOUR * HOURS_IN_DAY;
 
-    public static final int MS_IN_MIN = SEC_IN_MIN * MS_IN_SEC;
-    public static final int MS_IN_HOUR = MIN_IN_HOUR * MS_IN_MIN;
+    public static final int SEC_IN_HOUR = SEC_IN_MIN * MIN_IN_HOUR;
+    public static final int SEC_IN_DAY = SEC_IN_HOUR * HOURS_IN_DAY;
+
+    public static final int MIN_IN_DAY = MIN_IN_HOUR * HOURS_IN_DAY;
+
     /**
      * Contains some common patterns that can be used
      * for the methods of this class.
@@ -49,6 +53,78 @@ public class TimeUtil {
             millis = ms;
         }
 
+        /**
+         * Converts an amount of seconds to a time struct.
+         * @param seconds the amount of millis
+         * @return the time struct associated with the given amount
+         *
+         * @see #fromMillis(long)
+         */
+        public static TimeStruct fromSeconds(long seconds) {
+            return fromMillis(seconds * 1000);
+        }
+
+        /**
+         * Converts an amount of millis to a time struct.
+         * @param millis the amount of millis
+         * @return the time struct associated with the given amount
+         */
+        public static TimeStruct fromMillis(long millis) {
+            return new TimeStruct(
+                (int) (millis / MS_IN_HOUR),
+                (int) (millis % MS_IN_HOUR / MS_IN_MIN),
+                (int) (millis % MS_IN_MIN / MS_IN_SEC),
+                (int) (millis % MS_IN_SEC)
+            );
+        }
+
+        /**
+         * Converts a time string formatted as 'HH:mm:ss[.ms]' to a time struct.
+         * @param time the time string
+         * @return the time struct associated with the given string
+         */
+        public static TimeStruct fromString(String time) {
+            if (!StringUtil.isValid(time))
+                return null;
+
+            String[] components = time.split(":");
+            if (components.length < 3)
+                return null;
+
+            String s_components[] = components[2].split("\\.");
+
+            return new TimeStruct(
+                Integer.parseInt(components[0]),
+                Integer.parseInt(components[1]),
+                Integer.parseInt(s_components[0]),
+                s_components.length < 2 ? 0 : Integer.parseInt(s_components[1])
+            );
+        }
+
+        /**
+         * Converts this time to an amount of millis by summing the hours,
+         * minutes, seconds and millis.
+         * @return the amount of millis associated with this time
+         */
+        public long toMillis() {
+            return
+                millis +
+                second * MS_IN_SEC +
+                minute * MS_IN_MIN +
+                hour * MS_IN_HOUR;
+        }
+
+        /**
+         * Converts this time to an amount of seconds by summing the hours,
+         * minutes and seconds
+         * @return the amount of seconds associated with this time
+         */
+        public long toSeconds() {
+            return
+                second +
+                minute * SEC_IN_MIN +
+                hour * SEC_IN_HOUR;
+        }
 
         /**
          * Converts this time to a string formatted 'HH:mm:ss[.ms]'
@@ -59,11 +135,12 @@ public class TimeUtil {
         public String toString() {
             return
                 String.format("%02d", hour) + ":" +
-                String.format("%02d", minute) + ":" +
-                String.format("%02d", second) +
+                    String.format("%02d", minute) + ":" +
+                    String.format("%02d", second) +
                     (millis > 0 ? String.format(".%02d", millis ) : "")
                 ;
         }
+
     }
 
     /**
@@ -108,31 +185,6 @@ public class TimeUtil {
     public static String datetimeToString(String pattern, LocalDateTime datetime) {
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         return datetime.format(f);
-    }
-
-    /**
-     * Converts an amount of millis to a time struct.
-     * @param millis the amount of millis
-     * @return the time struct associated with the given amount
-     */
-    public static TimeStruct millisToTime(long millis) {
-        return new TimeStruct(
-            (int) (millis / MS_IN_HOUR),
-            (int) (millis % MS_IN_HOUR / MS_IN_MIN),
-            (int) (millis % MS_IN_MIN / MS_IN_SEC),
-            (int) (millis % MS_IN_SEC)
-        );
-    }
-
-    /**
-     * Converts an amount of seconds to a time struct.
-     * @param seconds the amount of millis
-     * @return the time struct associated with the given amount
-     *
-     * @see #millisToTime(long)
-     */
-    public static TimeStruct secondsToTime(long seconds) {
-        return millisToTime(seconds * 1000);
     }
 }
 
