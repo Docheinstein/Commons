@@ -47,6 +47,9 @@ public class ZipUtil {
                 // Extract file
                 L.out("Unzipping file to: " + outputFile.getAbsolutePath());
 
+                // Ensure that file exits
+                outputFile.mkdirs();
+
                 try (OutputStream targetStream = new FileOutputStream(outputFile)) {
                     FileUtil.copy(zipStream, targetStream);
                 }

@@ -24,14 +24,14 @@ public class UtilTest {
 
     public static void main(String args[]) throws InterruptedException, IOException {
         initLogger();
-        L.debug(TimeUtil.TimeStruct.fromString("03:10:05.252").toString());
-        L.debug(TimeUtil.TimeStruct.fromString("03:10:05").toString());
-        L.debug("ms " + TimeUtil.TimeStruct.fromString("03:10:05").toMillis());
-        L.debug("s " + TimeUtil.TimeStruct.fromString("03:10:05.252").toSeconds());
+//        L.debug(TimeUtil.TimeStruct.fromString("03:10:05.252").toString());
+//        L.debug(TimeUtil.TimeStruct.fromString("03:10:05").toString());
+//        L.debug("ms " + TimeUtil.TimeStruct.fromString("03:10:05").toMillis());
+//        L.debug("s " + TimeUtil.TimeStruct.fromString("03:10:05.252").toSeconds());
 
 //        ZipUtil.unzip(new File("/tmp/panel_bundle.zip"), new File("/tmp/panel_bundle/"));
 //        ZipUtil.zip(new File("/tmp/t/panel_bundle"), new File("/tmp/t/panel_bundle_copy.zip"));
-//        ZipUtil.unzip(UtilTest.class.getResourceAsStream("panel_bundle.zip"), new File("/tmp/panel_bundle_from_res/"));
+        ZipUtil.unzip(UtilTest.class.getResourceAsStream("panel_bundle.zip"), new File("/tmp/panel_bundle_from_res/"));
 
 //        System.out.println(TimeUtil.millisToTime(11405252));
 //        System.out.println(TimeUtil.secondsToTime(11405));
