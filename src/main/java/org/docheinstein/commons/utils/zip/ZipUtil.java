@@ -2,6 +2,7 @@ package org.docheinstein.commons.utils.zip;
 
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.internal.DocCommonsLogger;
+import org.docheinstein.commons.utils.types.StringUtil;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
@@ -19,6 +20,42 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
 
     private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{ZIP_UTIL}");
+
+//    /**
+//     * Unzip a resource to a target directory.
+//     * @param source the zip stream
+//     * @param target the target directory
+//     * @throws IOException if the extraction fails
+//     */
+//    public static void unzip(InputStream source,
+//                             File target) throws IOException {
+//        final ZipInputStream zipStream = new ZipInputStream(source);
+//        ZipEntry zipEntry;
+//
+//        while ((zipEntry = zipStream.getNextEntry()) != null) {
+//            final String name = zipEntry.getName();
+//
+//            final File entryFile = new File(target, name);
+//
+//            if (!name.endsWith(File.separator)) {
+//                // Extract file
+//                L.out("Extracting file: " + entryFile.getAbsolutePath());
+//                try (OutputStream targetStream = new FileOutputStream(entryFile)) {
+//                    FileUtil.copy(zipStream, targetStream);
+//                }
+//            }
+//            else {
+//                // Create directories
+//                L.out("Creating directory: " + entryFile.getAbsolutePath());
+//                if (!entryFile.exists())
+//                    if (!entryFile.mkdirs()) {
+//                        L.out("Creation of directory has failed while extracting zip");
+//                        throw new IOException("Failed to createRequest directories needed for zip extraction");
+//                    }
+//            }
+//        }
+//    }
+
 
     /**
      * Unzip a resource to a target directory.
@@ -48,7 +85,7 @@ public class ZipUtil {
                 L.out("Unzipping file to: " + outputFile.getAbsolutePath());
 
                 // Ensure that file exits
-                outputFile.mkdirs();
+                // outputFile.mkdirs();
 
                 try (OutputStream targetStream = new FileOutputStream(outputFile)) {
                     FileUtil.copy(zipStream, targetStream);
@@ -98,9 +135,26 @@ public class ZipUtil {
 
         Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
             @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                Path targetDir = sourcePath.relativize(dir);
+
+                String s = targetDir.toString();
+
+                if (StringUtil.isValid(s)) {
+                    L.out("Adding directory entry to zip for: " + s + "/");
+                    zipOut.putNextEntry(new ZipEntry(s + "/"));
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
+                if (target.toPath().equals(file))
+                    return FileVisitResult.CONTINUE;
 
                 Path targetFile = sourcePath.relativize(file);
+
                 L.out("Zipping file to: " + file);
                 zipOut.putNextEntry(new ZipEntry(targetFile.toString()));
 
