@@ -97,7 +97,7 @@ public class TimeUtil {
                 Integer.parseInt(components[0]),
                 Integer.parseInt(components[1]),
                 Integer.parseInt(s_components[0]),
-                s_components.length < 2 ? 0 : Integer.parseInt(s_components[1])
+                s_components.length < 2 ? 0 : (int) (Double.parseDouble("." + s_components[1]) * 1000)
             );
         }
 
@@ -137,7 +137,7 @@ public class TimeUtil {
                 String.format("%02d", hour) + ":" +
                     String.format("%02d", minute) + ":" +
                     String.format("%02d", second) +
-                    (millis > 0 ? String.format(".%02d", millis ) : "")
+                    (millis > 0 ? String.format(".%03d", millis ) : "")
                 ;
         }
 

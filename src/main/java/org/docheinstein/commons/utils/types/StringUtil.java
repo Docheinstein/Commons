@@ -21,12 +21,34 @@ public class StringUtil {
     }
 
     /**
+     * Returns whether at least one of the given strings is valid.
+     * @param strs the strings to check
+     * @return whether at least one string is valid
+     */
+    public static boolean atLeastOneIsValid(String... strs) {
+        for (String str : strs) {
+            if (isValid(str))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Returns whether the string is valid, i.e. not null nor empty.
      * @param str the string to check
      * @return whether the string is valid
      */
     public static boolean isValid(String str) {
         return str != null && !str.isEmpty();
+    }
+
+    /**
+     * Returns the given string if it is valid or "" if it is null.
+     * @param str the string to make empty if null
+     * @return the given string if it is valid or "" if it is null
+     */
+    public static String toEmptyIfNull(String str) {
+        return str == null ? "" : str;
     }
 
     /**
@@ -39,4 +61,6 @@ public class StringUtil {
         e.printStackTrace(new PrintWriter(errors));
         return errors.toString();
     }
+
+
 }

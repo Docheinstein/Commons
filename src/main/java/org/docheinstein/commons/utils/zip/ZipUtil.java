@@ -21,42 +21,6 @@ public class ZipUtil {
 
     private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{ZIP_UTIL}");
 
-//    /**
-//     * Unzip a resource to a target directory.
-//     * @param source the zip stream
-//     * @param target the target directory
-//     * @throws IOException if the extraction fails
-//     */
-//    public static void unzip(InputStream source,
-//                             File target) throws IOException {
-//        final ZipInputStream zipStream = new ZipInputStream(source);
-//        ZipEntry zipEntry;
-//
-//        while ((zipEntry = zipStream.getNextEntry()) != null) {
-//            final String name = zipEntry.getName();
-//
-//            final File entryFile = new File(target, name);
-//
-//            if (!name.endsWith(File.separator)) {
-//                // Extract file
-//                L.out("Extracting file: " + entryFile.getAbsolutePath());
-//                try (OutputStream targetStream = new FileOutputStream(entryFile)) {
-//                    FileUtil.copy(zipStream, targetStream);
-//                }
-//            }
-//            else {
-//                // Create directories
-//                L.out("Creating directory: " + entryFile.getAbsolutePath());
-//                if (!entryFile.exists())
-//                    if (!entryFile.mkdirs()) {
-//                        L.out("Creation of directory has failed while extracting zip");
-//                        throw new IOException("Failed to createRequest directories needed for zip extraction");
-//                    }
-//            }
-//        }
-//    }
-
-
     /**
      * Unzip a resource to a target directory.
      * @param source the zip stream

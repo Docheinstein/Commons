@@ -311,12 +311,13 @@ public class DocLogger implements LoggerCapable {
      * Flushes the file log right now.
      */
     public static void flush() {
-        if (sWriter != null)
+        if (sWriter != null) {
             try {
                 sWriter.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
     }
 
     // Basic LoggerCapable log methods
@@ -396,6 +397,13 @@ public class DocLogger implements LoggerCapable {
      * @param message the message
      */
     private static void log(String tag, LogLevel lv, String message) {
+        boolean onStream = isLogLevelEnabledOnStream(lv);
+        boolean onFile = isLoggingOnFilesEnabled() && isLogLevelEnabledOnFile(lv);
+
+        if (!onStream && !onFile)
+            // Nothing to print
+            return;
+
         String logDate = TimeUtil.millisToString(
             TimeUtil.Patterns.DATE_TIME_SLASH,
             System.currentTimeMillis()
@@ -406,12 +414,12 @@ public class DocLogger implements LoggerCapable {
 
         // Logging on stream
 
-        if (isLogLevelEnabledOnStream(lv))
+        if (onStream)
             lv.stream.println(logMessage);
 
         // Logging on files
 
-        if (isLoggingOnFilesEnabled() && isLogLevelEnabledOnFile(lv)) {
+        if (onFile) {
             handleLoggingFileRoll();
 
             try {
