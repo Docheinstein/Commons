@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.Docheinstein:Commons:0.1'
+    compile 'com.github.docheinstein:commons:master-SNAPSHOT'
 }
 
 ```
