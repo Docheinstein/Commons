@@ -1,11 +1,10 @@
 import org.docheinstein.commons.internal.DocCommonsLogger;
-import org.docheinstein.commons.utils.file.FileUtil;
+import org.docheinstein.commons.utils.crypto.CryptoUtil;
 import org.docheinstein.commons.utils.logger.DocLogger;
-import org.docheinstein.commons.utils.time.TimeUtil;
-import org.docheinstein.commons.utils.zip.ZipUtil;
-
-import java.io.File;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +21,10 @@ public class UtilTest {
         DocCommonsLogger.addListener(L::debug);
     }
 
-    public static void main(String args[]) throws InterruptedException, IOException {
+    public static void main(String args[]) throws InterruptedException, IOException, NoSuchAlgorithmException {
         initLogger();
-        L.debug("ms: " + TimeUtil.TimeStruct.fromString("00:00:00.1").toString());
-        L.debug("s: " + TimeUtil.TimeStruct.fromString("00:00:01.6").toSeconds());
+//        L.debug("ms: " + TimeUtil.TimeStruct.fromString("00:00:00.1").toString());
+//        L.debug("s: " + TimeUtil.TimeStruct.fromString("00:00:01.6").toSeconds());
 //        L.debug(TimeUtil.TimeStruct.fromString("03:10:05.252").toString());
 //        L.debug(TimeUtil.TimeStruct.fromString("03:10:05").toString());
 //        L.debug("ms " + TimeUtil.TimeStruct.fromString("03:10:05").toMillis());
@@ -117,12 +116,84 @@ public class UtilTest {
 //
 //        DocLogger.createForClass(EnumConstantNotPresentException.class).debug("Ciao");
 //        DocLogger.createForClass(HTTPBinding.class).debug("Ciao2");
+
+//        String key = "Bar12345Bar12345"; // 128 bit key
+//        String iv = "RandomInitVector"; // 16 bytes IV
+//        String plain = "This is a message";
+//
+//        String enc = CryptoUtil.AES.encryptToBase64(plain, iv, key);
+//        String dec = CryptoUtil.AES.decryptFromBase64(enc, iv, key);
+//
+//        System.out.println("PLAIN: " + plain);
+//        System.out.println("ENC: " + enc);
+//        System.out.println("DEC: " + dec);
+
+//        System.out.println("DEC: " + CryptoUtil.MD5.encode("Cane"));
+
+//        KeyPair keys = newKeyPair();
+
+//        System.out.println("PUBLIC");
+//        System.out.println(CryptoUtil.Base64.encode(keys.getPublic().getEncoded()));
+//
+//        System.out.println("PRIVATE");
+//        System.out.println(CryptoUtil.Base64.encode(keys.getPrivate().getEncoded()));
+////
+
+//        String data = "This is a very long message; but could be even longer!";
+//        String enc = CryptoUtil.RSA.encryptToBase64(data, pub);
+//        String dec = CryptoUtil.RSA.decryptFromBase64(enc, priv);
+//
+//        System.out.println("enc l: " + enc.length());
+//        System.out.println("dec l: " + dec.length());
+//        System.out.println("enc : " + enc);
+//        System.out.println("dec : " + dec);
+//
+//        if (data.equals(dec))
+//            System.out.println("Works!");
+
+
+//        String datadata = new String(data.getBytes());
+//
+//        String encryptedString = CryptoUtil.RSA.encryptString(data, keys.getPublic());
+//        byte[] encryptStringToBytes = encryptedString.getBytes();
+//
+//        byte[] encryptedBytes = CryptoUtil.RSA.encrypt(data, keys.getPublic());
+//        String encryptedBytesToString = new String(encryptedBytes);
+//
+//        System.out.println("S encryptedString length " + encryptedString.length());
+//        System.out.println("B encryptStringToBytes length " + encryptStringToBytes.length);
+//        System.out.println("B encryptedBytes length " + encryptedBytes.length);
+//        System.out.println("S encryptedBytesToString length " + encryptedBytesToString.length());
+//        System.out.println("S data " + data.length());
+//        System.out.println("S datadata " + datadata.length());
+//
+//        System.out.println("S encryptedString " + encryptedString);
+//        System.out.println("S encryptedBytesToString " + encryptedBytesToString);
+
+
+
+
+//        System.out.println("Encrypted data length " + encryptedMessage.length());
+//        System.out.println("Encrypted64 data length " + encryptedMessageB64.length());
+//        System.out.println("Encrypted bytes length " + CryptoUtil.RSA.encrypt(data, keys.getPublic()).length);
+//
+//        String decryptedMessage = CryptoUtil.RSA.decryptString(encryptedMessage, keys.getPrivate());
+//        System.out.println("Decrypted data length " + decryptedMessage.length());
+//
+//        if (!data.equals(decryptedMessage))
+//                throw new RuntimeException("RSA doesn't work");
+//
+//        System.out.println("Everything ok!");
+
+
+//        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
+//        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
     }
 
-    private static void printHeaderFields(Map<String, List<String>> headerFields) {
-        headerFields.forEach((k, vs) -> {
-            System.out.println("Key = " + k);
-            vs.forEach(v -> System.out.println("--Value = " + v));
-        });
+    public static KeyPair newKeyPair() throws NoSuchAlgorithmException {
+        final int keySize = 2048;
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(keySize);
+        return keyPairGenerator.genKeyPair();
     }
 }
