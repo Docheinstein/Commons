@@ -3,6 +3,7 @@ package org.docheinstein.commons.utils.time;
 import org.docheinstein.commons.utils.types.StringUtil;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +33,8 @@ public class TimeUtil {
         public static final String DATE_TIME_SLASH = "dd/MM/yyyy HH:mm:ss";
         public static final String DATE_TIME_DASH = "dd-MM-yyyy HH:mm:ss";
         public static final String TIME = "HH:mm:ss";
+        public static final String DATE_SLASH = "dd/MM/yyyy";
+        public static final String DATE_DASH = "dd-MM-yyyy";
 
         public static final String DATE_CHRONOLOGICALLY_SORTABLE = "yyyy_MM_dd";
     }
@@ -176,15 +179,26 @@ public class TimeUtil {
     }
 
     /**
-     * Returns the string that is composed using the given pattern, date.
+     * Returns the string that is composed using the given pattern and date.
      *
      * @param pattern  the date/time pattern
      * @param datetime the datetime
-     * @return the string that is composed using the given pattern, date
+     * @return the string that is composed using the given pattern and date
      */
     public static String datetimeToString(String pattern, LocalDateTime datetime) {
         DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
         return datetime.format(f);
+    }
+
+    /**
+     * Returns the string that is composed using the given pattern and date.
+     * @param pattern the date pattern
+     * @param date the date
+     * @return the string that is composed using the given pattern and date
+     */
+    public static String dateToString(String pattern, LocalDate date) {
+        DateTimeFormatter f = DateTimeFormatter.ofPattern(pattern);
+        return date.format(f);
     }
 }
 

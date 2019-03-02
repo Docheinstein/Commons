@@ -3,6 +3,7 @@ import org.docheinstein.commons.utils.crypto.CryptoUtil;
 import org.docheinstein.commons.utils.file.FileLinesReader;
 import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.logger.DocLogger;
+import org.docheinstein.commons.utils.time.TimeUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -196,15 +198,16 @@ public class UtilTest {
 //        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
 //        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
 
-        StringBuilder releasedTo = new StringBuilder();
-
-        FileUtil.readFileLineByLine("/tmp/lic", line -> {
-            if (line.startsWith("Rilasciata")) {
-                releasedTo.append(line);
-            }
-            return true;
-        });
-
-        System.out.println(releasedTo);
+//        StringBuilder releasedTo = new StringBuilder();
+//
+//        FileUtil.readFileLineByLine("/tmp/lic", line -> {
+//            if (line.startsWith("Rilasciata")) {
+//                releasedTo.append(line);
+//            }
+//            return true;
+//        });
+//
+//        System.out.println(releasedTo);
+        System.out.println(TimeUtil.dateToString(TimeUtil.Patterns.DATE_SLASH, LocalDate.now()));
     }
 }
