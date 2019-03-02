@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Provides utilities for files.
@@ -312,6 +314,31 @@ public class FileUtil {
                 return null;
             }
         }
+    }
+
+    /**
+     * Reads the file at the given path line by line.
+     * @param path the path of the file to read
+     * @param linesReader the file reader which takes the read lines and
+     *                    returns whether the file reading should continue
+     */
+    public static void readFileLineByLine(String path, Predicate<String> linesReader) {
+        readFileLineByLine(new File(path), linesReader);
+    }
+
+    /**
+     * Reads the given file line by line.
+     * @param file the file to read
+     * @param linesReader the file reader which takes the read lines and
+     *                    returns whether the file reading should continue
+     */
+    public static void readFileLineByLine(File file, Predicate<String> linesReader) {
+        new FileLinesReader(file) {
+            @Override
+            protected boolean readLine(String line) {
+                return linesReader.test(line);
+            }
+        }.readLineByLine();
     }
 
     /**

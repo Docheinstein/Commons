@@ -1,12 +1,19 @@
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.utils.crypto.CryptoUtil;
+import org.docheinstein.commons.utils.file.FileLinesReader;
+import org.docheinstein.commons.utils.file.FileUtil;
 import org.docheinstein.commons.utils.logger.DocLogger;
+
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class UtilTest {
 
@@ -188,12 +195,16 @@ public class UtilTest {
 
 //        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
 //        System.out.println(CryptoUtil.RSA.encryptToBase64("pippo", PUBK));
-    }
 
-    public static KeyPair newKeyPair() throws NoSuchAlgorithmException {
-        final int keySize = 2048;
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(keySize);
-        return keyPairGenerator.genKeyPair();
+        StringBuilder releasedTo = new StringBuilder();
+
+        FileUtil.readFileLineByLine("/tmp/lic", line -> {
+            if (line.startsWith("Rilasciata")) {
+                releasedTo.append(line);
+            }
+            return true;
+        });
+
+        System.out.println(releasedTo);
     }
 }
