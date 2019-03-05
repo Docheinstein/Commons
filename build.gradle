@@ -1,5 +1,5 @@
-group 'org.docheinstein.commons'
-version '1.0'
+group = 'org.docheinstein.commons'
+version = '1.0'
 
 apply plugin: 'java'
 
