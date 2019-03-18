@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.docheinstein.commons.internal.DocCommonsLogger;
 import org.docheinstein.commons.asserts.Asserts;
+import org.docheinstein.commons.types.StringUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -21,6 +22,13 @@ import java.net.URL;
 public class FXUtil {
 
     private static final DocCommonsLogger L = DocCommonsLogger.createForTag("{FX_UTIL}");
+
+    public static void setExistent(Node node, boolean existent) {
+        if (node == null)
+            return;
+        node.setVisible(existent);
+        node.setManaged(existent);
+    }
 
     /**
      * Creates a new window using the given root element and title
@@ -131,7 +139,8 @@ public class FXUtil {
         try {
             node = loader.load();
         } catch (IOException e) {
-            L.out("Error occurred while loading FXML for URL: " + fxml + ": " + e.getMessage());
+            L.out("Error occurred while loading FXML for URL: " + fxml + ".\n" +
+                    StringUtil.toString(e));
             return null;
         }
 
