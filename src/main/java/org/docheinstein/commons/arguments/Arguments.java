@@ -18,11 +18,15 @@ public class Arguments {
      * and known argument list.
      * @param args the application argument list of strings
      * @param knownArguments the known argument list
+     * @param throwIfMandatoryIsMissing throws an exception if a mandatory parameter
+     *                                is missing; this can also be done manually by
+     *                                calling {@link #throwIfMandatoryArgumentIsMissing()}
      * @throws ArgumentParseException if an exception occurs while parsing the argument list
      */
-    public Arguments(String[] args, Argument[] knownArguments) throws ArgumentParseException {
+    public Arguments(String[] args, Argument[] knownArguments,
+                     boolean throwIfMandatoryIsMissing) throws ArgumentParseException {
         createKnownArgumentsMap(knownArguments);
-        parse(args);
+        parse(args, throwIfMandatoryIsMissing);
     }
 
     /**
@@ -64,6 +68,21 @@ public class Arguments {
     }
 
     /**
+     * Throws an exception if a mandatory argument has not been provided.
+     * @throws ArgumentParseException if a mandatory argument is not provided
+     */
+    public void throwIfMandatoryArgumentIsMissing() throws ArgumentParseException {
+        for (Argument arg : mKnownArguments.values()) {
+            if (arg.isMandatory() && !mArgs.containsKey(arg))
+                throw new ArgumentParseException(
+                    arg,
+                    ArgumentParseException.FailReason.MandatoryNotProvided
+                );
+        }
+    }
+
+
+    /**
      * Creats a map that associated the arguments' aliases to the arguments.
      * @param knownArguments the known argument list for which create the map
      */
@@ -78,9 +97,14 @@ public class Arguments {
      * Parses the arguments list and creates the map that will contain
      * the arguments' params.
      * @param args the argument list
+     * @param throwIfMandatoryIsMissing throws an exception if a mandatory parameter
+     *                                is missing; this can also be done manually by
+     *                                calling {@link #throwIfMandatoryArgumentIsMissing()}
      * @throws ArgumentParseException if an exception occurs while parsing the argument list
+     *                                or if a mandatory parameter is missing (if
+     *                                throwIfMandatoryIsMissing is true)
      */
-    private void parse(String[] args) throws ArgumentParseException {
+    private void parse(String[] args, boolean throwIfMandatoryIsMissing) throws ArgumentParseException {
         mArgs = new HashMap<>();
 
         // For each given argument check if it matches one of the
@@ -145,21 +169,9 @@ public class Arguments {
             }
         }
 
-        // Check that every mandatory parameter is provided
-        throwIfMandatoryArgumentIsMissing();
-    }
-
-    /**
-     * Throws an exception if a mandatory argument has not been provided.
-     * @throws ArgumentParseException if a mandatory argument is not provided
-     */
-    private void throwIfMandatoryArgumentIsMissing() throws ArgumentParseException {
-        for (Argument arg : mKnownArguments.values()) {
-            if (arg.isMandatory() && !mArgs.containsKey(arg))
-                throw new ArgumentParseException(
-                    arg,
-                    ArgumentParseException.FailReason.MandatoryNotProvided
-                );
+        if (throwIfMandatoryIsMissing) {
+            // Check that every mandatory parameter is provided
+             throwIfMandatoryArgumentIsMissing();
         }
     }
 }
