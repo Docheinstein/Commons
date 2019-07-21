@@ -18,8 +18,8 @@ public class DocLogger implements LoggerCapable {
 
     /** Level of logging. */
     public enum LogLevel {
-        Verbose("V", System.out),
         Debug("D", System.out),
+        Verbose("V", System.out),
         Info("I", System.out),
         Warn("W", System.err),
         Error("E", System.err)
@@ -244,21 +244,21 @@ public class DocLogger implements LoggerCapable {
     // Static log methods
 
     /**
-     * Prints the given message as a verbose message.
-     * @param tag the tag of the entity that produces this message
-     * @param message the message
-     */
-    public static void verbose(String tag, String message) {
-        log(tag, LogLevel.Verbose, message);
-    }
-
-    /**
      * Prints the given message as a debug message.
      * @param tag the tag of the entity that produces this message
      * @param message the message
      */
     public static void debug(String tag, String message) {
         log(tag, LogLevel.Debug, message);
+    }
+
+    /**
+     * Prints the given message as a verbose message.
+     * @param tag the tag of the entity that produces this message
+     * @param message the message
+     */
+    public static void verbose(String tag, String message) {
+        log(tag, LogLevel.Verbose, message);
     }
 
     /**
@@ -323,21 +323,21 @@ public class DocLogger implements LoggerCapable {
     // Basic LoggerCapable log methods
 
     /**
-     * Prints the given message as a verbose message.
-     * @param message the message
-     */
-    @Override
-    public void verbose(String message) {
-        verbose(mTag, message);
-    }
-
-    /**
      * Prints the given message as a debug message.
      * @param message the message
      */
     @Override
     public void debug(String message) {
         debug(mTag, message);
+    }
+
+    /**
+     * Prints the given message as a verbose message.
+     * @param message the message
+     */
+    @Override
+    public void verbose(String message) {
+        verbose(mTag, message);
     }
 
     /**

@@ -7,16 +7,16 @@ package org.docheinstein.commons.logger;
 public interface LoggerCapable {
 
     /**
-     * Prints the given message as a verbose message.
-     * @param message the message
-     */
-    void verbose(String message);
-
-    /**
      * Prints the given message as a debug message.
      * @param message the message
      */
     void debug(String message);
+
+    /**
+     * Prints the given message as a verbose message.
+     * @param message the message
+     */
+    void verbose(String message);
 
     /**
      * Prints the given message as an info message.

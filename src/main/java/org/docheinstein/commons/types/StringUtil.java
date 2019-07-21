@@ -56,7 +56,7 @@ public class StringUtil {
      * @param e an exception
      * @return the stack trace of the exception
      */
-    public static String toString(Exception e) {
+    public static String toString(Throwable e) {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
         return errors.toString();
