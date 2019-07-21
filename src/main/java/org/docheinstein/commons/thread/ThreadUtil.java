@@ -50,7 +50,8 @@ public class ThreadUtil {
         Thread t = new Thread(runnable);
         // Even if observer is null, print the thread fail as library message
         t.setUncaughtExceptionHandler((thread, exception) -> {
-            L.out("Uncaught exception occurred in thread" + StringUtil.toString(exception));
+            L.out("Uncaught exception occurred in thread " + thread.getName() + "\n" +
+                StringUtil.toString(exception));
             if (observer != null)
                 observer.onThreadException(exception);
         });
